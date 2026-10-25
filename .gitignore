@@ -1,0 +1,31 @@
+# dependencies
+node_modules/
+
+# env
+.env
+.env.local
+.env.*.local
+
+# build
+.next/
+out/
+dist/
+
+# test / bake-off output
+results.json
+playwright-report/
+test-results/
+*.log
+
+# local sessions
+.data/
+web/.data/
+
+# vercel
+.vercel/
+web/.vercel/
+
+# os
+.DS_Store
+
+*.md
