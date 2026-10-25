@@ -1,13 +1,22 @@
 import { z } from "zod";
 import { RUNGS } from "../types";
 
+const boundedStrings = (maxItems: number) =>
+  z.preprocess(
+    (value) => (Array.isArray(value) ? value.slice(0, maxItems) : value),
+    z.array(z.string().min(3).max(300)).min(1).max(maxItems),
+  );
+
 export const LadderQuestionSchema = z.object({
   rung: z.enum(RUNGS),
   prompt: z.string().min(10).max(600),
   focusStart: z.number().int().min(1),
   focusEnd: z.number().int().min(1),
-  expectedPoints: z.array(z.string().min(3).max(300)).min(1).max(6),
-  redFlags: z.array(z.string().min(3).max(300)).max(5),
+  expectedPoints: boundedStrings(6),
+  redFlags: z.preprocess(
+    (value) => (Array.isArray(value) ? value.slice(0, 5) : value),
+    z.array(z.string().min(3).max(300)).max(5),
+  ),
   whyThisQuestion: z.string().min(5).max(400),
 });
 
@@ -36,6 +45,15 @@ export const EvaluationSchema = z.object({
   quote: z.string().max(400),
   quoteIsStrength: z.boolean(),
   missing: z.array(z.string().max(300)).max(4),
+  axisGaps: z
+    .object({
+      correctness: z.string().max(300).optional(),
+      depth: z.string().max(300).optional(),
+      ownership: z.string().max(300).optional(),
+      clarity: z.string().max(300).optional(),
+    })
+    .optional()
+    .default({}),
   followUp: z.string().max(500).nullable(),
   followUpReason: z.string().max(300).nullable(),
 });

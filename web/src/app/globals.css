@@ -171,6 +171,34 @@ a {
   opacity: 0.42;
 }
 
+.btn[aria-busy="true"] {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn[aria-busy="true"]::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  background: linear-gradient(
+    110deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.16) 48%,
+    transparent 76%
+  );
+  animation: loading-sheen 1.3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes loading-sheen {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
 /* ---------- code ---------- */
 
 .code-shell {

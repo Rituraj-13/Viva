@@ -511,10 +511,20 @@ export function IngestClient() {
                 type="button"
                 onClick={create}
                 disabled={!canCreate || creating}
+                aria-busy={creating}
                 className={buttonClass("primary", "sm")}
               >
-                Build the exam
-                <ArrowRight size={13} />
+                {creating ? (
+                  <>
+                    <Loader2 size={13} className="animate-spin" />
+                    Building…
+                  </>
+                ) : (
+                  <>
+                    Build the exam
+                    <ArrowRight size={13} />
+                  </>
+                )}
               </button>
             </div>
           </div>
@@ -595,10 +605,20 @@ export function IngestClient() {
                 type="button"
                 onClick={create}
                 disabled={!canCreate || creating}
+                aria-busy={creating}
                 className={buttonClass("primary", "sm")}
               >
-                Build the exam
-                <ArrowRight size={13} />
+                {creating ? (
+                  <>
+                    <Loader2 size={13} className="animate-spin" />
+                    Building…
+                  </>
+                ) : (
+                  <>
+                    Build the exam
+                    <ArrowRight size={13} />
+                  </>
+                )}
               </button>
             </div>
           </div>

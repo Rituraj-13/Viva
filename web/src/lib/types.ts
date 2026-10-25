@@ -30,6 +30,7 @@ export type Evaluation = {
   quote: string;
   quoteIsStrength: boolean;
   missing: string[];
+  axisGaps?: Partial<Record<AxisKey, string>>;
   followUp: string | null;
   followUpReason: string | null;
 };
@@ -78,6 +79,7 @@ export type Report = {
   confidentButWrong: { questionIndex: number; quote: string; why: string } | null;
   quietlyRight: { questionIndex: number; quote: string } | null;
   bestMoment: { questionIndex: number; quote: string } | null;
+  improvementAreas?: string[];
   nextQuestions: string[];
   createdAt: string;
 };
@@ -138,6 +140,7 @@ export type SessionState = {
 export type ReportCopy = {
   headline: string;
   summary: string;
+  improvementAreas?: string[];
   nextQuestions: string[];
 };
 

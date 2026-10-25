@@ -218,6 +218,12 @@ export function heuristicEvaluation(
       quote,
       quoteIsStrength: false,
       missing: question.expectedPoints.slice(0, 3),
+      axisGaps: {
+        correctness: "Build a basic explanation of what this code guarantees and which routes or states it affects.",
+        depth: "Practice tracing the mechanism step by step, including what happens when the expected path fails.",
+        ownership: "Practice explaining why this design was chosen, what would break if it changed, and how you would test it.",
+        clarity: "Start with the main responsibility, then explain the relevant lines in execution order.",
+      },
       followUp: skipped
         ? null
         : `You didn't get to an answer. Pick one line in ${question.focusStart}–${question.focusEnd} and walk me through what it does.`,
@@ -301,6 +307,12 @@ export function heuristicEvaluation(
     quote,
     quoteIsStrength: verdict === "strong",
     missing: missingPoints.slice(0, 3),
+    axisGaps: {
+      correctness: missingPoints[0] ?? "Be more precise about what the code guarantees.",
+      depth: missingPoints[1] ?? "Explain the mechanism and the failure path behind the answer.",
+      ownership: "Explain why this design was chosen and how you would test it.",
+      clarity: "Organize the explanation around the relevant control flow.",
+    },
     followUp,
     followUpReason: verdict === "strong" ? null : `Targets the weakest claim: ${target}`,
   };

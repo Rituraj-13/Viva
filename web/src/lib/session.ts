@@ -72,7 +72,7 @@ export function computeState(session: SessionData): SessionState {
   ).length;
 
   const pendingProbe = session.turns.find(
-    (t) => t.kind === "probe" && !t.answer.trim(),
+    (t) => t.kind === "probe" && !t.skipped && !t.answer.trim(),
   );
   const firstUnanswered = session.questions.find(
     (q) =>

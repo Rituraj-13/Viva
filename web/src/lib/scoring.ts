@@ -2,7 +2,6 @@ import type {
   Axis,
   AxisKey,
   Evaluation,
-  Question,
   Report,
   ReportCopy,
   SessionData,
@@ -55,6 +54,7 @@ export function bandFor(score: number): Report["band"] {
 
 function buildAxes(session: SessionData): Axis[] {
   const turns = evaluated(session);
+  const usedGaps = new Set<string>();
   return AXIS_ORDER.map((key) => {
     const scores = turns.map((t) => t.evaluation[key]);
     const score = round1(average(scores));
@@ -66,9 +66,27 @@ function buildAxes(session: SessionData): Axis[] {
       ? session.questions.find((q) => q.id === best.questionId)
       : undefined;
     const quote = best?.evaluation.quote?.trim() ?? "";
-    const gap = turns
-      .flatMap((t) => t.evaluation.missing)
-      .find((m) => m.trim().length > 0);
+    const weakest = [...turns].sort(
+      (a, b) => a.evaluation[key] - b.evaluation[key],
+    )[0];
+    let gap =
+      weakest?.evaluation.axisGaps?.[key]?.trim() ||
+      weakest?.evaluation.missing.find((m) => m.trim().length > 0);
+    const axisGuidance: Record<AxisKey, string> = {
+      correctness:
+        "Separate what the code actually guarantees from what the framework or API appears to do.",
+      depth:
+        "Explain the mechanism, trade-off, and failure path behind the answer.",
+      ownership:
+        "Name why this design was chosen, what would break if it changed, and how you would test it.",
+      clarity:
+        "Structure the explanation around the relevant control flow instead of listing surface details.",
+    };
+
+    if (gap && usedGaps.has(gap.toLowerCase())) {
+      gap = axisGuidance[key];
+    }
+    if (gap) usedGaps.add(gap.toLowerCase());
 
     return {
       key,
@@ -80,10 +98,20 @@ function buildAxes(session: SessionData): Axis[] {
         score >= 3
           ? "Consistent evidence across the session."
           : gap
-            ? `Gap: ${gap}`
-            : "No clear evidence in this session.",
+            ? friendlyImprovement(key, gap)
+            : friendlyImprovement(key, axisGuidance[key]),
     };
   });
+}
+
+function friendlyImprovement(key: AxisKey, gap: string) {
+  const starts = {
+    correctness: "To strengthen correctness, focus on understanding the following",
+    depth: "To build more depth, focus on understanding the following",
+    ownership: "To show more ownership, focus on understanding the following",
+    clarity: "To make your explanation clearer, focus on understanding the following",
+  };
+  return `${starts[key]} ${gap.replace(/^(gap|focus):\s*/i, "").replace(/[.!?]+$/, "")}.`;
 }
 
 function strongestAndWeakest(axes: Axis[]) {
@@ -117,6 +145,14 @@ function isQuietlyRight(turn: EvaluatedTurn) {
     turn.evaluation.quoteIsStrength === true &&
     turn.evaluation.quote.trim().length > 0
   );
+}
+
+function improvementAreas(axes: Axis[]) {
+  return axes
+    .filter((axis) => axis.score < 3)
+    .sort((a, b) => a.score - b.score)
+    .slice(0, 3)
+    .map((axis) => `${axis.label}: ${axis.note.replace(/^Gap:\s*/i, "")}`);
 }
 
 function templateNextQuestions(session: SessionData) {
@@ -207,6 +243,7 @@ function templateCopy(session: SessionData, axes: Axis[]): ReportCopy {
   return {
     headline,
     summary: parts.join(" "),
+    improvementAreas: improvementAreas(axes),
     nextQuestions: templateNextQuestions(session),
   };
 }
@@ -260,6 +297,8 @@ export function computeReport(session: SessionData, copy?: ReportCopy): Report {
           quote: best.evaluation.quote,
         }
       : null,
+    improvementAreas:
+      generated.improvementAreas?.slice(0, 3) ?? improvementAreas(axes),
     nextQuestions: generated.nextQuestions.slice(0, 3),
     createdAt: new Date().toISOString(),
   };

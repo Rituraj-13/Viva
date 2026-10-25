@@ -28,6 +28,7 @@ Rules:
 - Every question must be answerable from the code as written. Do not invent concurrency, async behavior, network calls, frameworks, or deployment details the file does not contain.
 - If the file is synchronous, do not ask about races, interleaving, atomicity, mutexes, or threads. Choose a failure visible in the control flow: a thrown error, an unguarded boundary, a missing cleanup, an unbounded collection, a clock dependency, or a wrong default.
 - The failure question must point to the line where the failure originates. The change question must name the exact function or data structure that changes. The ownership question must target a specific non-trivial line.
+- Include at most 6 expectedPoints and at most 5 redFlags per question. Prefer the most important points; extra items will be discarded.
 - If the file is under 15 meaningful lines, or is only boilerplate, set tooThin to true, explain why in one sentence, and return zero questions.
 - Return only the structured object. No prose outside it.
 
@@ -108,6 +109,37 @@ function codeHasConcurrency(code: string) {
   );
 }
 
+function ladderValidationIssues(
+  raw: {
+    questions: {
+      prompt: string;
+      expectedPoints: string[];
+      focusStart: number;
+      focusEnd: number;
+    }[];
+  },
+) {
+  const issues: string[] = [];
+  if (raw.questions.length !== 5) {
+    issues.push(`expected 5 questions, received ${raw.questions.length}`);
+  }
+  raw.questions.forEach((question, index) => {
+    if (question.prompt.length < 10) {
+      issues.push(`question ${index + 1} prompt is shorter than 10 characters`);
+    }
+    if (question.expectedPoints.length === 0) {
+      issues.push(`question ${index + 1} has no expected points`);
+    }
+    if (question.focusStart < 1) {
+      issues.push(`question ${index + 1} starts before line 1`);
+    }
+    if (question.focusEnd < question.focusStart) {
+      issues.push(`question ${index + 1} ends before its start line`);
+    }
+  });
+  return issues;
+}
+
 export async function buildLadder(
   code: string,
   language: string,
@@ -158,17 +190,27 @@ ${lineNumbered(code)}
     };
   }
 
-  const valid =
-    raw.questions.length === 5 &&
-    raw.questions.every(
-      (q) =>
-        q.prompt.length >= 10 &&
-        q.expectedPoints.length > 0 &&
-        q.focusStart >= 1 &&
-        q.focusEnd >= q.focusStart,
-    );
+  const issues = ladderValidationIssues(raw);
+  const usableQuestions = raw.questions.filter(
+    (q) =>
+      q.prompt.length >= 10 &&
+      q.expectedPoints.length > 0 &&
+      q.focusStart >= 1 &&
+      q.focusEnd >= q.focusStart,
+  );
 
-  if (!valid) {
+  if (issues.length > 0) {
+    console.warn("[viva] ladder response required repair", {
+      provider: result.provider,
+      filePath,
+      lineCount,
+      issues,
+      receivedQuestions: raw.questions.length,
+      usableQuestions: usableQuestions.length,
+    });
+  }
+
+  if (usableQuestions.length === 0) {
     return {
       tooThin: false,
       summary: fallback.summary,
@@ -178,7 +220,24 @@ ${lineNumbered(code)}
     };
   }
 
-  const normalized = normalizeLadder(raw, lineCount);
+  const normalized = normalizeLadder(
+    {
+      ...raw,
+      questions: [
+        ...usableQuestions,
+        ...fallback.questions.slice(usableQuestions.length).map((question) => ({
+          rung: question.rung,
+          prompt: question.prompt,
+          focusStart: question.focusStart,
+          focusEnd: question.focusEnd,
+          expectedPoints: question.expectedPoints,
+          redFlags: question.redFlags,
+          whyThisQuestion: question.whyThisQuestion,
+        })),
+      ].slice(0, 5),
+    },
+    lineCount,
+  );
   const failure = normalized.questions[2];
   const failureText = [
     failure.prompt,
@@ -192,13 +251,13 @@ ${lineNumbered(code)}
     return {
       tooThin: false,
       ...normalized,
-      model: `${result.provider} (failure question repaired)`,
+      model: `${result.provider}${issues.length ? " (repaired)" : ""} (failure question repaired)`,
     };
   }
 
   return {
     tooThin: false,
     ...normalized,
-    model: result.provider,
+    model: issues.length ? `${result.provider} (repaired)` : result.provider,
   };
 }

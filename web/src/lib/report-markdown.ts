@@ -57,9 +57,16 @@ export function reportToMarkdown(input: {
     );
   }
 
-  lines.push("## Next time, ask", "");
-  report.nextQuestions.forEach((question, index) => {
-    lines.push(`${index + 1}. ${question}`);
+  lines.push("## Key improvement areas", "");
+  const improvementAreas = report.improvementAreas?.length
+    ? report.improvementAreas
+    : report.axes
+        .filter((axis) => axis.score < 3)
+        .sort((a, b) => a.score - b.score)
+        .slice(0, 3)
+        .map((axis) => `${axis.label}: ${axis.note.replace(/^Gap:\s*/i, "")}`);
+  improvementAreas.forEach((area, index) => {
+    lines.push(`${index + 1}. ${area}`);
   });
   lines.push(
     "",

@@ -67,6 +67,14 @@ export function ReportView({
       bestMoment.quote.length > 0 &&
       bestMoment.quote !== quietlyRight?.quote,
   );
+  const improvementAreas =
+    report.improvementAreas?.length
+      ? report.improvementAreas
+      : report.axes
+          .filter((axis) => axis.score < 3)
+          .sort((a, b) => a.score - b.score)
+          .slice(0, 3)
+          .map((axis) => `${axis.label}: ${axis.note.replace(/^Gap:\s*/i, "")}`);
 
   return (
     <article className="paper-card p-5 sm:p-8 md:p-12">
@@ -188,17 +196,17 @@ export function ReportView({
       </div>
 
       <section className="mt-10">
-        <Kicker>Next time, ask</Kicker>
+        <Kicker>Key improvement areas</Kicker>
         <ol className="mt-4">
-          {report.nextQuestions.map((question, index) => (
+          {improvementAreas.map((area, index) => (
             <li
-              key={question}
+              key={area}
               className="flex gap-4 border-t border-rule py-3 last:border-b"
             >
               <span className="mt-0.5 font-mono text-[10px] text-red">
                 {String(index + 1).padStart(2, "0")}
               </span>
-              <p className="text-base leading-snug md:text-lg">{question}</p>
+              <p className="text-base leading-snug md:text-lg">{area}</p>
             </li>
           ))}
         </ol>

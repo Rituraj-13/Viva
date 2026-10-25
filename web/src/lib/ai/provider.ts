@@ -93,29 +93,57 @@ export async function generateStructured<T>({
   timeoutMs = 25_000,
 }: GenerateOptions<T>): Promise<{ object: T; provider: string } | null> {
   for (const candidate of candidates()) {
-    try {
-      const result = await generateText({
-        model: candidate.model,
-        output: Output.object({ schema }),
-        system,
-        prompt,
-        ...(candidate.groq
-          ? { maxOutputTokens: Math.max(maxOutputTokens, 2000) }
-          : { temperature: 0.2, maxOutputTokens }),
-        maxRetries: 0,
-        abortSignal: AbortSignal.timeout(timeoutMs),
-      });
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      try {
+        const result = await generateText({
+          model: candidate.model,
+          output: Output.object({ schema }),
+          system,
+          prompt:
+            attempt === 0
+              ? prompt
+              : `${prompt}\n\nIMPORTANT: Return only one valid JSON object matching the schema. Do not include markdown, explanations, or trailing text. Keep every array within its stated limit.`,
+          ...(candidate.groq
+            ? { maxOutputTokens: Math.max(maxOutputTokens, 2000) }
+            : { temperature: 0.2, maxOutputTokens }),
+          ...(candidate.groq
+            ? {
+                providerOptions: {
+                  groq: {
+                    structuredOutputs: true,
+                    strictJsonSchema: true,
+                  },
+                },
+              }
+            : {}),
+          maxRetries: 0,
+          abortSignal: AbortSignal.timeout(timeoutMs),
+        });
 
-      if (!result.output) {
-        throw new Error("The model returned no structured output.");
+        if (!result.output) {
+          throw new Error("The model returned no structured output.");
+        }
+
+        return { object: result.output as T, provider: candidate.name };
+      } catch (error) {
+        const details =
+          error instanceof Error
+            ? {
+                name: error.name,
+                message: error.message,
+                cause:
+                  error.cause instanceof Error
+                    ? error.cause.message
+                    : typeof error.cause === "string"
+                      ? error.cause
+                      : undefined,
+              }
+            : { value: String(error) };
+        console.warn(
+          `[viva] ${label} failed via ${candidate.name} (attempt ${attempt + 1}/2)`,
+          details,
+        );
       }
-
-      return { object: result.output as T, provider: candidate.name };
-    } catch (error) {
-      console.warn(
-        `[viva] ${label} failed via ${candidate.name}:`,
-        error instanceof Error ? error.message : error,
-      );
     }
   }
 

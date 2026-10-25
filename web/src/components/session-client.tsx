@@ -37,6 +37,9 @@ export function SessionClient({
   const [inputMode, setInputMode] = useState<"flow" | "typed">("flow");
   const [loading, setLoading] = useState(false);
   const [finishing, setFinishing] = useState(false);
+  const [pendingAction, setPendingAction] = useState<"submit" | "skip" | null>(
+    null,
+  );
   const [error, setError] = useState<ErrorState>(null);
   const [charCount, setCharCount] = useState(0);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -115,6 +118,7 @@ export function SessionClient({
     }
 
     setLoading(true);
+    setPendingAction(skip ? "skip" : "submit");
     setError(null);
 
     try {
@@ -137,6 +141,7 @@ export function SessionClient({
           action: data?.error?.action,
         });
         setLoading(false);
+        setPendingAction(null);
         return;
       }
 
@@ -162,12 +167,14 @@ export function SessionClient({
         // Ignore storage failures.
       }
       setLoading(false);
+      setPendingAction(null);
     } catch {
       setError({
         message: "The connection dropped before the answer was saved.",
         action: "Try submitting again — your draft is still here.",
       });
       setLoading(false);
+      setPendingAction(null);
     }
   }
 
@@ -225,10 +232,10 @@ export function SessionClient({
             <button
               type="button"
               onClick={finish}
-              disabled={finishing}
+              disabled={finishing || loading}
               className="font-mono text-[10px] uppercase tracking-[0.08em] text-ink-soft underline decoration-rule underline-offset-4 hover:text-red"
             >
-              Finish early
+              {finishing ? "Finishing…" : "Finish early"}
             </button>
           )}
         </div>
@@ -373,18 +380,23 @@ export function SessionClient({
                       <button
                         type="button"
                         onClick={() => submit(true)}
-                        disabled={loading}
+                        disabled={loading || finishing}
+                        aria-busy={pendingAction === "skip"}
                         className={buttonClass("ghost", "sm")}
                       >
-                        Skip
+                        {pendingAction === "skip" && (
+                          <Loader2 size={13} className="animate-spin" />
+                        )}
+                        {pendingAction === "skip" ? "Skipping…" : "Skip"}
                       </button>
                       <button
                         type="button"
                         onClick={() => submit(false)}
-                        disabled={loading}
+                        disabled={loading || finishing}
+                        aria-busy={pendingAction === "submit"}
                         className={buttonClass("primary", "sm")}
                       >
-                        {loading ? (
+                        {pendingAction === "submit" ? (
                           <>
                             <Loader2 size={13} className="animate-spin" />
                             Grading…
@@ -414,6 +426,7 @@ export function SessionClient({
                   type="button"
                   onClick={finish}
                   disabled={finishing}
+                  aria-busy={finishing}
                   className={cn(buttonClass("primary"), "mt-6")}
                 >
                   {finishing ? (

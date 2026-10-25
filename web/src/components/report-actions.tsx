@@ -1,6 +1,7 @@
 "use client";
 
-import { Check, Copy, Link2, Printer, Trash2 } from "lucide-react";
+import { Check, Copy, Link2, Loader2, Printer, Trash2 } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { buttonClass } from "@/components/ui";
@@ -58,9 +59,9 @@ export function ReportActions({
         <a href="/new" className={buttonClass("primary", "sm")}>
           Run this on your code
         </a>
-        <a href="/demo" className={buttonClass("ghost", "sm")}>
+        <Link href="/demo" className={buttonClass("ghost", "sm")}>
           All replays
-        </a>
+        </Link>
       </div>
     );
   }
@@ -102,8 +103,13 @@ export function ReportActions({
             className="btn btn-ghost btn-sm border-red/30 text-red hover:border-red hover:bg-red hover:text-cream"
             onClick={remove}
             disabled={deleting}
+            aria-busy={deleting}
           >
-            <Trash2 size={13} />
+            {deleting ? (
+              <Loader2 size={13} className="animate-spin" />
+            ) : (
+              <Trash2 size={13} />
+            )}
             {deleting ? "Deleting…" : "Delete"}
           </button>
         )}
