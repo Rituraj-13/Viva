@@ -16,6 +16,9 @@ import type { Seed } from "@/fixtures/seeds";
 import { RUNG_LABELS } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
+const PLAYBACK_SPEEDS = [1, 2, 3] as const;
+type PlaybackSpeed = (typeof PLAYBACK_SPEEDS)[number];
+
 type Step =
   | { kind: "question"; turnIndex: number; text: string }
   | { kind: "answer"; turnIndex: number; text: string }
@@ -51,6 +54,7 @@ export function ReplayClient({ seed, html }: { seed: Seed; html: string }) {
   const [typed, setTyped] = useState("");
   const [playing, setPlaying] = useState(true);
   const [showReport, setShowReport] = useState(false);
+  const [playbackSpeed, setPlaybackSpeed] = useState<PlaybackSpeed>(1);
 
   const current = steps[stepIndex];
   const currentTurn = seed.turns[current?.turnIndex ?? 0];
@@ -63,7 +67,7 @@ export function ReplayClient({ seed, html }: { seed: Seed; html: string }) {
       const timer = window.setTimeout(() => {
         setShowReport(true);
         setPlaying(false);
-      }, 700);
+      }, 900 / playbackSpeed);
       return () => window.clearTimeout(timer);
     }
 
@@ -71,16 +75,16 @@ export function ReplayClient({ seed, html }: { seed: Seed; html: string }) {
       const timer = window.setTimeout(() => {
         setStepIndex((index) => Math.min(index + 1, steps.length - 1));
         setTyped("");
-      }, 1100);
+      }, 1800 / playbackSpeed);
       return () => window.clearTimeout(timer);
     }
 
     if (typed.length < current.text.length) {
       const remaining = current.text.length - typed.length;
-      const chunk = remaining > 160 ? 4 : 2;
+      const chunk = remaining > 160 ? 3 : 1;
       const timer = window.setTimeout(() => {
         setTyped(current.text.slice(0, typed.length + chunk));
-      }, current.kind === "probe" ? 9 : 13);
+      }, (current.kind === "probe" ? 34 : 42) / playbackSpeed);
       return () => window.clearTimeout(timer);
     }
 
@@ -89,10 +93,10 @@ export function ReplayClient({ seed, html }: { seed: Seed; html: string }) {
         setStepIndex((index) => Math.min(index + 1, steps.length - 1));
         setTyped("");
       },
-      current.kind === "probe" ? 850 : 1350,
+      (current.kind === "probe" ? 1100 : 1700) / playbackSpeed,
     );
     return () => window.clearTimeout(timer);
-  }, [playing, showReport, current, typed, steps.length]);
+  }, [playing, showReport, current, typed, steps.length, playbackSpeed]);
 
   useEffect(() => {
     if (showReport) {
@@ -215,6 +219,23 @@ export function ReplayClient({ seed, html }: { seed: Seed; html: string }) {
               {playing ? <Pause size={11} /> : <Play size={11} />}
               {playing ? "Pause" : "Play"}
             </button>
+            <label className="inline-flex items-center gap-1.5 border border-cream/20 px-2 py-1 font-mono text-[9px] uppercase tracking-[0.08em] text-cream/65">
+              Speed
+              <select
+                value={playbackSpeed}
+                onChange={(event) =>
+                  setPlaybackSpeed(Number(event.target.value) as PlaybackSpeed)
+                }
+                className="bg-transparent text-cream outline-none"
+                aria-label="Replay playback speed"
+              >
+                {PLAYBACK_SPEEDS.map((speed) => (
+                  <option key={speed} value={speed} className="bg-ink text-cream">
+                    {speed}x
+                  </option>
+                ))}
+              </select>
+            </label>
             <Link
               href="/new"
               className="inline-flex items-center gap-1.5 bg-cream px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.08em] text-ink transition-colors hover:bg-red hover:text-cream"
@@ -317,7 +338,7 @@ export function ReplayClient({ seed, html }: { seed: Seed; html: string }) {
               <div className="mt-5 border-t border-rule pt-5" aria-live="polite">
                 <div className="flex items-center gap-2">
                   <span className="mono-label text-ink-soft">Candidate</span>
-                  <Badge tone="red">Spoken · Flow</Badge>
+                  <Badge tone="red">Spoken · Wispr Flow</Badge>
                 </div>
                 <p className="mt-3 min-h-[4.5rem] whitespace-pre-wrap font-sans text-[17px] leading-relaxed">
                   {typed}
@@ -357,6 +378,25 @@ export function ReplayClient({ seed, html }: { seed: Seed; html: string }) {
                   {playing ? <Pause size={12} /> : <Play size={12} />}
                   {playing ? "Pause" : "Play"}
                 </button>
+                <label className="inline-flex h-8 items-center gap-1.5 border border-rule px-2.5 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-soft">
+                  Speed
+                  <select
+                    value={playbackSpeed}
+                    onChange={(event) =>
+                      setPlaybackSpeed(
+                        Number(event.target.value) as PlaybackSpeed,
+                      )
+                    }
+                    className="bg-transparent text-ink outline-none"
+                    aria-label="Replay playback speed"
+                  >
+                    {PLAYBACK_SPEEDS.map((speed) => (
+                      <option key={speed} value={speed}>
+                        {speed}x
+                      </option>
+                    ))}
+                  </select>
+                </label>
                 <button
                   type="button"
                   onClick={nextStep}

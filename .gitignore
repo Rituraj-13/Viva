@@ -29,3 +29,6 @@ web/.vercel/
 .DS_Store
 
 *.md
+!/README.md
+!/web/README.md
+.vercel

@@ -1,6 +1,7 @@
 import { ArrowRight, Mic, ShieldCheck } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import { IngestClient } from "@/components/ingest-client";
 import { Badge, Kicker, Stamp, buttonClass } from "@/components/ui";
 import { RUNG_LABELS, RUNGS } from "@/lib/types";
@@ -11,7 +12,25 @@ export const metadata: Metadata = {
     "Bring a public GitHub file or paste code. Viva writes a five-question oral exam anchored to the file.",
 };
 
-export default function NewVivaPage() {
+type NewVivaSearchParams = Promise<{
+  sample?: string | string[] | undefined;
+}>;
+
+async function SampleIngest({
+  searchParams,
+}: {
+  searchParams: NewVivaSearchParams;
+}) {
+  const params = await searchParams;
+  const sample = Array.isArray(params.sample) ? params.sample[0] : params.sample;
+  return <IngestClient startWithSample={sample === "1"} />;
+}
+
+export default function NewVivaPage({
+  searchParams,
+}: {
+  searchParams: NewVivaSearchParams;
+}) {
   return (
     <main className="mx-auto max-w-[1180px] px-5 py-10 md:px-8 md:py-14">
       <div className="flex flex-wrap items-end justify-between gap-5">
@@ -30,7 +49,7 @@ export default function NewVivaPage() {
         <div className="flex flex-wrap gap-2">
           <Badge tone="red">
             <Mic size={10} />
-            Flow or keyboard
+            Wispr Flow or keyboard
           </Badge>
           <Badge>
             <ShieldCheck size={10} />
@@ -40,7 +59,9 @@ export default function NewVivaPage() {
       </div>
 
       <div className="mt-9 grid gap-5 lg:grid-cols-[minmax(0,1fr)_330px]">
-        <IngestClient />
+        <Suspense fallback={<IngestClient />}>
+          <SampleIngest searchParams={searchParams} />
+        </Suspense>
 
         <aside className="space-y-4">
           <div className="paper-card p-5">

@@ -5,6 +5,8 @@ import {
   Timer,
 } from "lucide-react";
 import Link from "next/link";
+import { ProofStrip } from "@/components/proof-strip";
+import { RecentVivas } from "@/components/recent-vivas";
 import { seeds } from "@/fixtures/seeds";
 import { RUNG_LABELS, RUNGS } from "@/lib/types";
 import { Badge, Kicker, Stamp, buttonClass } from "@/components/ui";
@@ -179,6 +181,9 @@ export default function HomePage() {
         </div>
       </section>
 
+      <ProofStrip />
+      <RecentVivas />
+
       <section id="how" className="mx-auto max-w-[1180px] px-5 py-16 md:px-8 md:py-20">
         <div className="max-w-2xl">
           <Kicker>The loop</Kicker>
@@ -292,7 +297,7 @@ export default function HomePage() {
               <span className="mono-label text-ink-soft">Answer composer</span>
               <Badge tone="red">
                 <Mic size={10} />
-                Flow
+                Wispr Flow
               </Badge>
             </div>
             <div className="mt-3 border border-rule bg-paper/60 p-4 font-sans text-lg leading-relaxed">
@@ -305,15 +310,15 @@ export default function HomePage() {
             </div>
             <div className="mt-3 flex items-center justify-between gap-3 border-t border-rule pt-3">
               <span className="font-mono text-[9px] uppercase tracking-[0.08em] text-ink-soft">
-                Flow is typing
+                Wispr Flow is typing
               </span>
               <span className="font-mono text-[9px] uppercase tracking-[0.08em] text-ink-soft">
                 Ctrl/⌘ + Enter
               </span>
             </div>
             <p className="mt-3 text-[11px] leading-relaxed text-ink-soft">
-              Hold the Flow key, speak, release. Viva never sees your microphone —
-              it only sees the text Flow types.
+              Hold the Wispr Flow key, speak, release. Viva never sees your
+              microphone — it only sees the text Wispr Flow types.
             </p>
           </div>
         </div>

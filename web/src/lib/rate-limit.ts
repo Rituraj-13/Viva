@@ -1,5 +1,5 @@
 import { env } from "./env";
-import { listSessions } from "./store";
+import { countRecentSessions, countRecentTurns } from "./store";
 import type { SessionData } from "./types";
 
 export type QuotaResult =
@@ -9,17 +9,10 @@ export type QuotaResult =
 const DAY = 24 * 60 * 60 * 1000;
 const HOUR = 60 * 60 * 1000;
 
-function isRecent(iso: string, windowMs: number) {
-  const time = new Date(iso).getTime();
-  return Number.isFinite(time) && Date.now() - time < windowMs;
-}
-
 export async function checkSessionQuota(anonId: string): Promise<QuotaResult> {
-  const sessions = await listSessions();
-  const recent = sessions.filter((s) => isRecent(s.createdAt, DAY));
-  const mine = recent.filter((s) => s.anonId === anonId);
+  const { mine, total } = await countRecentSessions(anonId, DAY);
 
-  if (mine.length >= env.maxSessionsPerDay) {
+  if (mine >= env.maxSessionsPerDay) {
     return {
       ok: false,
       code: "session_limit",
@@ -28,7 +21,7 @@ export async function checkSessionQuota(anonId: string): Promise<QuotaResult> {
     };
   }
 
-  if (recent.length >= env.maxLiveSessionsPerDay) {
+  if (total >= env.maxLiveSessionsPerDay) {
     return {
       ok: false,
       code: "global_limit",
@@ -41,14 +34,7 @@ export async function checkSessionQuota(anonId: string): Promise<QuotaResult> {
 }
 
 export async function checkTurnQuota(anonId: string): Promise<QuotaResult> {
-  const sessions = await listSessions();
-  let turns = 0;
-  for (const session of sessions) {
-    if (session.anonId !== anonId) continue;
-    for (const turn of session.turns) {
-      if (isRecent(turn.createdAt, HOUR)) turns += 1;
-    }
-  }
+  const turns = await countRecentTurns(anonId, HOUR);
 
   if (turns >= env.maxTurnsPerHour) {
     return {

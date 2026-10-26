@@ -7,6 +7,7 @@ import {
   Keyboard,
   Loader2,
   Mic,
+  PencilLine,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -42,6 +43,7 @@ export function SessionClient({
   );
   const [error, setError] = useState<ErrorState>(null);
   const [charCount, setCharCount] = useState(0);
+  const [answerValue, setAnswerValue] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const activeQuestion =
@@ -70,6 +72,7 @@ export function SessionClient({
       stored = "";
     }
     el.value = stored;
+    setAnswerValue(stored);
     setCharCount(stored.length);
     el.focus();
   }, [draftKey]);
@@ -85,6 +88,7 @@ export function SessionClient({
 
   function handleInput(event: React.FormEvent<HTMLTextAreaElement>) {
     const value = event.currentTarget.value;
+    setAnswerValue(value);
     setCharCount(value.length);
     if (error) setError(null);
     try {
@@ -160,6 +164,7 @@ export function SessionClient({
       setDone(Boolean(data.done || nextState?.done));
 
       if (textareaRef.current) textareaRef.current.value = "";
+      setAnswerValue("");
       setCharCount(0);
       try {
         window.sessionStorage.removeItem(draftKey);
@@ -177,6 +182,8 @@ export function SessionClient({
       setPendingAction(null);
     }
   }
+
+  const hasAnswer = answerValue.trim().length > 0;
 
   async function finish() {
     if (finishing || loading) return;
@@ -315,6 +322,7 @@ export function SessionClient({
                       <button
                         type="button"
                         onClick={() => setInputMode("flow")}
+                        disabled={loading || finishing}
                         className={cn(
                           "inline-flex items-center gap-1.5 px-3 py-1.5 font-mono text-[9px] uppercase tracking-[0.09em] transition-colors",
                           inputMode === "flow"
@@ -324,11 +332,12 @@ export function SessionClient({
                         aria-pressed={inputMode === "flow"}
                       >
                         <Mic size={11} />
-                        Flow
+                        Wispr Flow
                       </button>
                       <button
                         type="button"
                         onClick={() => setInputMode("typed")}
+                        disabled={loading || finishing}
                         className={cn(
                           "inline-flex items-center gap-1.5 px-3 py-1.5 font-mono text-[9px] uppercase tracking-[0.09em] transition-colors",
                           inputMode === "typed"
@@ -343,27 +352,64 @@ export function SessionClient({
                     </div>
                     <span className="font-mono text-[9px] uppercase tracking-[0.08em] text-ink-soft">
                       {inputMode === "flow"
-                        ? "Wispr Flow types into this box"
+                        ? "Wispr Flow · speak or edit"
                         : "Keyboard answer"}
                     </span>
                   </div>
 
-                  <textarea
-                    key={draftKey}
-                    ref={textareaRef}
-                    onInput={handleInput}
-                    onKeyDown={handleKeyDown}
-                    rows={6}
-                    maxLength={8000}
-                    spellCheck={false}
-                    placeholder={
-                      activeProbe
-                        ? "Answer the follow-up. Keep it concrete."
-                        : "Start with what it does. Then point to the line that matters."
-                    }
-                    className="mt-3 w-full resize-y border border-rule bg-cream px-4 py-3.5 font-sans text-[17px] leading-relaxed text-ink outline-none transition-colors placeholder:text-ink-soft/45 focus:border-ink"
-                    aria-label="Your spoken answer"
-                  />
+                  <div className="relative mt-3">
+                    <textarea
+                      key={draftKey}
+                      ref={textareaRef}
+                      onInput={handleInput}
+                      onKeyDown={handleKeyDown}
+                      rows={6}
+                      maxLength={8000}
+                      spellCheck={false}
+                      disabled={loading || finishing}
+                      placeholder={
+                        inputMode === "flow"
+                          ? "Speak with Wispr Flow, then edit here if needed."
+                          : activeProbe
+                            ? "Answer the follow-up. Keep it concrete."
+                            : "Start with what it does. Then point to the line that matters."
+                      }
+                      className={cn(
+                        "w-full resize-y border border-rule bg-cream px-4 py-3.5 font-sans text-[17px] leading-relaxed text-ink outline-none transition-colors placeholder:text-ink-soft/45 focus:border-ink disabled:cursor-not-allowed disabled:opacity-60",
+                        inputMode === "flow" && !hasAnswer && "pr-12",
+                      )}
+                      aria-label={
+                        inputMode === "flow"
+                          ? "Wispr Flow answer, editable"
+                          : "Your typed answer"
+                      }
+                      aria-describedby="answer-input-help"
+                    />
+                    {inputMode === "flow" && !hasAnswer && !loading && (
+                      <div
+                        className="pointer-events-none absolute right-4 top-4 text-red/70"
+                        aria-hidden="true"
+                      >
+                        <Mic size={19} />
+                      </div>
+                    )}
+                  </div>
+                  <p
+                    id="answer-input-help"
+                    className="mt-2 flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.07em] text-ink-soft"
+                  >
+                    {inputMode === "flow" ? (
+                      <>
+                        <Mic size={11} className="text-red" />
+                        Speak into Wispr Flow, then edit the text if needed
+                      </>
+                    ) : (
+                      <>
+                        <PencilLine size={11} className="text-red" />
+                        Type your answer here
+                      </>
+                    )}
+                  </p>
 
                   {loading && (
                     <div className="mt-3 flex items-center gap-2 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-soft">
@@ -392,7 +438,7 @@ export function SessionClient({
                       <button
                         type="button"
                         onClick={() => submit(false)}
-                        disabled={loading || finishing}
+                        disabled={!hasAnswer || loading || finishing}
                         aria-busy={pendingAction === "submit"}
                         className={buttonClass("primary", "sm")}
                       >

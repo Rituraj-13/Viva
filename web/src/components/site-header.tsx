@@ -28,6 +28,12 @@ export function SiteHeader() {
           >
             Method
           </Link>
+          <Link
+            href="/build"
+            className="hidden px-3 py-2 font-mono text-[11px] uppercase tracking-[0.1em] text-ink-soft transition-colors hover:text-ink sm:inline"
+          >
+            Build log
+          </Link>
           <Link href="/new" className="btn btn-primary btn-sm">
             Run a viva
           </Link>

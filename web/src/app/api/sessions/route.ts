@@ -9,6 +9,7 @@ import { fetchRepoFile, GITHUB_FILE_LIMITS } from "@/lib/github";
 import { checkSessionQuota } from "@/lib/rate-limit";
 import { saveSession } from "@/lib/store";
 import { toPublicSession } from "@/lib/session";
+import { elapsedMs, logApi, serverTiming } from "@/lib/timing";
 import type { SessionData } from "@/lib/types";
 
 
@@ -27,10 +28,17 @@ const Body = z.discriminatedUnion("source", [
 ]);
 
 export async function POST(request: Request) {
-  await connection();
+  const startedAt = performance.now();
+  let llmMs: number | undefined;
+  let dbMs = 0;
+
   try {
+    await connection();
     const anonId = await ensureAnonId();
+
+    const quotaStartedAt = performance.now();
     const quota = await checkSessionQuota(anonId);
+    dbMs += elapsedMs(quotaStartedAt);
     if (!quota.ok) {
       throw new ApiError(429, quota.code, quota.message, quota.action);
     }
@@ -88,7 +96,9 @@ export async function POST(request: Request) {
       );
     }
 
+    const ladderStartedAt = performance.now();
     const ladder = await buildLadder(code, language, filePath);
+    llmMs = elapsedMs(ladderStartedAt);
     if (ladder.tooThin) {
       throw new ApiError(
         422,
@@ -121,13 +131,48 @@ export async function POST(request: Request) {
       updatedAt: now,
     };
 
+    const saveStartedAt = performance.now();
     await saveSession(session);
+    dbMs += elapsedMs(saveStartedAt);
+
+    logApi("POST /api/sessions", startedAt, {
+      status: 201,
+      dbMs,
+      llmMs,
+      model: ladder.model,
+      source: body.source,
+      lineCount,
+    });
 
     return NextResponse.json(
       { session: toPublicSession(session), model: ladder.model },
-      { status: 201 },
+      {
+        status: 201,
+        headers: {
+          "Server-Timing": serverTiming({
+            db: dbMs,
+            llm: llmMs,
+            total: elapsedMs(startedAt),
+          }),
+        },
+      },
     );
   } catch (error) {
-    return handleRouteError(error);
+    const response = handleRouteError(error);
+    response.headers.set(
+      "Server-Timing",
+      serverTiming({
+        db: dbMs,
+        llm: llmMs,
+        total: elapsedMs(startedAt),
+      }),
+    );
+    logApi("POST /api/sessions", startedAt, {
+      status: response.status,
+      dbMs,
+      llmMs,
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return response;
   }
 }

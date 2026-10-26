@@ -246,7 +246,7 @@ export function ReportView({
                     </span>
                     {entry.inputMode && (
                       <Badge tone={entry.inputMode === "flow" ? "red" : "ink"}>
-                        {entry.inputMode === "flow" ? "Spoken · Flow" : "Typed"}
+                        {entry.inputMode === "flow" ? "Spoken · Wispr Flow" : "Typed"}
                       </Badge>
                     )}
                   </div>

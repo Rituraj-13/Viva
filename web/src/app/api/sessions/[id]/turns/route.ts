@@ -15,7 +15,8 @@ import {
   publicQuestion,
   publicTurn,
 } from "@/lib/session";
-import { saveSession } from "@/lib/store";
+import { recordTurnUsage, saveSession } from "@/lib/store";
+import { elapsedMs, logApi, serverTiming } from "@/lib/timing";
 import { MAX_TURNS, type Turn } from "@/lib/types";
 
 
@@ -30,10 +31,17 @@ const Body = z.object({
 });
 
 export async function POST(request: Request, { params }: Context) {
-  await connection();
+  const startedAt = performance.now();
+  let llmMs: number | undefined;
+  let dbMs = 0;
+  let evaluationModel: string | undefined;
+
   try {
+    await connection();
     const { id } = await params;
+    const sessionStartedAt = performance.now();
     const session = await sessionForOwner(id);
+    dbMs += elapsedMs(sessionStartedAt);
     if (session.status === "reported") {
       throw new ApiError(
         409,
@@ -43,7 +51,9 @@ export async function POST(request: Request, { params }: Context) {
       );
     }
 
+    const quotaStartedAt = performance.now();
     const quota = await checkTurnQuota(session.anonId);
+    dbMs += elapsedMs(quotaStartedAt);
     if (!quota.ok) {
       throw new ApiError(429, quota.code, quota.message, quota.action);
     }
@@ -80,6 +90,7 @@ export async function POST(request: Request, { params }: Context) {
 
     let turn: Turn;
     let createdProbe: Turn | null = null;
+    const newTurns: Turn[] = [];
 
     if (body.turnId) {
       const probe = session.turns.find((t) => t.id === body.turnId);
@@ -104,12 +115,15 @@ export async function POST(request: Request, { params }: Context) {
         );
       }
 
+      const llmStartedAt = performance.now();
       const evaluated = await evaluateAnswer({
         code: session.code,
         question,
         answer,
         skipped: body.skipped,
       });
+      llmMs = elapsedMs(llmStartedAt);
+      evaluationModel = evaluated.model;
 
       probe.answer = answer;
       probe.inputMode = body.inputMode;
@@ -129,12 +143,15 @@ export async function POST(request: Request, { params }: Context) {
         );
       }
 
+      const llmStartedAt = performance.now();
       const evaluated = await evaluateAnswer({
         code: session.code,
         question,
         answer,
         skipped: body.skipped,
       });
+      llmMs = elapsedMs(llmStartedAt);
+      evaluationModel = evaluated.model;
 
       turn = {
         id: nanoid(12),
@@ -149,6 +166,7 @@ export async function POST(request: Request, { params }: Context) {
         createdAt: new Date().toISOString(),
       };
       session.turns.push(turn);
+      newTurns.push(turn);
     }
 
     const probeCount = session.turns.filter(
@@ -182,24 +200,81 @@ export async function POST(request: Request, { params }: Context) {
         createdAt: new Date().toISOString(),
       };
       session.turns.push(createdProbe);
+      newTurns.push(createdProbe);
     }
 
     const next = createdProbe ? null : nextQuestionAfter(session, question.id);
     session.status = "in_progress";
     session.updatedAt = new Date().toISOString();
+
+    const saveStartedAt = performance.now();
     await saveSession(session);
+    dbMs += elapsedMs(saveStartedAt);
+
+    if (newTurns.length > 0) {
+      const usageStartedAt = performance.now();
+      await Promise.all(
+        newTurns.map((newTurn) =>
+          recordTurnUsage({
+            turnId: newTurn.id,
+            sessionId: session.id,
+            anonId: session.anonId,
+            createdAt: newTurn.createdAt,
+          }),
+        ),
+      );
+      dbMs += elapsedMs(usageStartedAt);
+    }
 
     const state = computeState(session);
     const done = !createdProbe && !next && state.done;
 
-    return NextResponse.json({
-      turn: publicTurn(turn),
-      probe: createdProbe ? publicTurn(createdProbe) : null,
-      nextQuestion: next ? publicQuestion(next) : null,
-      state,
+    logApi("POST /api/sessions/:id/turns", startedAt, {
+      status: 200,
+      dbMs,
+      llmMs,
+      model: evaluationModel,
+      probe: Boolean(createdProbe),
       done,
+      skipped: body.skipped,
+      turns: session.turns.length,
     });
+
+    return NextResponse.json(
+      {
+        turn: publicTurn(turn),
+        probe: createdProbe ? publicTurn(createdProbe) : null,
+        nextQuestion: next ? publicQuestion(next) : null,
+        state,
+        done,
+      },
+      {
+        headers: {
+          "Server-Timing": serverTiming({
+            db: dbMs,
+            llm: llmMs,
+            total: elapsedMs(startedAt),
+          }),
+        },
+      },
+    );
   } catch (error) {
-    return handleRouteError(error);
+    const response = handleRouteError(error);
+    response.headers.set(
+      "Server-Timing",
+      serverTiming({
+        db: dbMs,
+        llm: llmMs,
+        total: elapsedMs(startedAt),
+      }),
+    );
+    logApi("POST /api/sessions/:id/turns", startedAt, {
+      status: response.status,
+      dbMs,
+      llmMs,
+      model: evaluationModel,
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return response;
   }
 }

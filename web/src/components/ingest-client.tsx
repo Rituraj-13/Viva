@@ -13,6 +13,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { Badge, buttonClass } from "@/components/ui";
+import { recordRecent } from "@/lib/recent";
 import { cn } from "@/lib/utils";
 
 type Listing = {
@@ -119,9 +120,15 @@ const STAGES = [
   "Checking the line references…",
 ];
 
-export function IngestClient() {
+export function IngestClient({
+  startWithSample = false,
+}: {
+  startWithSample?: boolean;
+}) {
   const router = useRouter();
-  const [tab, setTab] = useState<"github" | "paste">("github");
+  const [tab, setTab] = useState<"github" | "paste">(
+    startWithSample ? "paste" : "github",
+  );
   const [repoUrl, setRepoUrl] = useState("");
   const [listing, setListing] = useState<Listing | null>(null);
   const [treeLoading, setTreeLoading] = useState(false);
@@ -130,9 +137,13 @@ export function IngestClient() {
   const [file, setFile] = useState<FilePreview | null>(null);
   const [fileLoading, setFileLoading] = useState(false);
 
-  const [pasteCode, setPasteCode] = useState("");
-  const [pasteLabel, setPasteLabel] = useState("snippet.ts");
-  const [pasteLanguage, setPasteLanguage] = useState("auto");
+  const [pasteCode, setPasteCode] = useState(startWithSample ? SAMPLE : "");
+  const [pasteLabel, setPasteLabel] = useState(
+    startWithSample ? "login-throttle.ts" : "snippet.ts",
+  );
+  const [pasteLanguage, setPasteLanguage] = useState(
+    startWithSample ? "typescript" : "auto",
+  );
 
   const [error, setError] = useState<IngestError>(null);
   const [creating, setCreating] = useState(false);
@@ -289,6 +300,15 @@ export function IngestClient() {
       }
 
       succeeded = true;
+      if (data?.session?.id) {
+        recordRecent({
+          id: data.session.id,
+          slug: data.session.slug,
+          filePath: data.session.filePath,
+          language: data.session.language,
+          createdAt: data.session.createdAt,
+        });
+      }
       router.push(`/s/${data.session.id}`);
     } catch {
       setError({
@@ -530,6 +550,16 @@ export function IngestClient() {
           </div>
         ) : (
           <div className="mt-6">
+            {startWithSample && (
+              <div className="mb-4 flex gap-2 border border-red/25 bg-red/[0.04] p-3">
+                <Sparkles size={15} className="mt-0.5 shrink-0 text-red" />
+                <p className="text-sm leading-relaxed text-ink">
+                  The <strong>login-throttle</strong> sample is preloaded. Press{" "}
+                  <strong>Build the exam</strong> when you’re ready — no typing
+                  needed.
+                </p>
+              </div>
+            )}
             <div className="grid gap-3 sm:grid-cols-[1fr_0.9fr]">
               <div>
                 <label htmlFor="file-label" className="mono-label text-ink-soft">

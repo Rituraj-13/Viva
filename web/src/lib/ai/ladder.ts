@@ -162,8 +162,10 @@ export async function buildLadder(
     schema: LadderSchema,
     system: SYSTEM,
     label: "ladder",
-    maxOutputTokens: 2600,
-    timeoutMs: 30_000,
+    tier: "smart",
+    maxOutputTokens: 2200,
+    timeoutMs: 10_000,
+    deadlineMs: 20_000,
     prompt: `<file path="${filePath}" language="${language}" lines="${lineCount}">
 ${lineNumbered(code)}
 </file>`,

@@ -43,8 +43,10 @@ export async function generateReportCopy(
     schema: ReportCopySchema,
     system: SYSTEM,
     label: "report",
-    maxOutputTokens: 1200,
-    timeoutMs: 25_000,
+    tier: "smart",
+    maxOutputTokens: 700,
+    timeoutMs: 8_000,
+    deadlineMs: 12_000,
     prompt: JSON.stringify(
       {
         file: session.filePath,

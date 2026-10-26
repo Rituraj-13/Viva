@@ -35,6 +35,11 @@ export function SiteFooter() {
                 Method &amp; limits
               </Link>
             </li>
+            <li>
+              <Link href="/build" className="hover:text-red">
+                Flow build log
+              </Link>
+            </li>
           </ul>
         </div>
 

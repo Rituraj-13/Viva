@@ -102,8 +102,10 @@ export async function evaluateAnswer(input: {
     schema: EvaluationSchema,
     system: SYSTEM,
     label: "evaluation",
-    maxOutputTokens: 1600,
-    timeoutMs: 25_000,
+    tier: "fast",
+    maxOutputTokens: 1100,
+    timeoutMs: 8_000,
+    deadlineMs: 12_000,
     prompt: `<code_excerpt lines="${excerptStart}-${excerptEnd} of ${totalLines}">
 ${lineNumberedRange(code, excerptStart, excerptEnd)}
 </code_excerpt>

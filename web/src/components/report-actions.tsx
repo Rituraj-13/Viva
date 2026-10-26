@@ -21,6 +21,7 @@ export function ReportActions({
   const [copied, setCopied] = useState<"link" | "markdown" | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [openingReplay, setOpeningReplay] = useState(false);
 
   async function copy(text: string, kind: "link" | "markdown") {
     try {
@@ -80,6 +81,24 @@ export function ReportActions({
             {copied === "link" ? <Check size={13} /> : <Link2 size={13} />}
             {copied === "link" ? "Link copied" : "Copy link"}
           </button>
+        )}
+        {mode === "owner" && sessionId && (
+          <Link
+            href={`/s/${sessionId}/replay`}
+            className={buttonClass("ghost", "sm")}
+            onClick={(event) => {
+              if (openingReplay) {
+                event.preventDefault();
+                return;
+              }
+              setOpeningReplay(true);
+            }}
+            aria-busy={openingReplay}
+            aria-disabled={openingReplay}
+          >
+            {openingReplay && <Loader2 size={13} className="animate-spin" />}
+            {openingReplay ? "Opening replay…" : "Replay viva"}
+          </Link>
         )}
         <button
           type="button"

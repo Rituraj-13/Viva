@@ -176,7 +176,7 @@ export default function AboutPage() {
       <section className="mt-12">
         <Kicker>Wispr Flow</Kicker>
         <h2 className="mt-3 font-serif text-3xl tracking-[-0.04em] md:text-4xl">
-          The microphone is Flow’s job.
+          The microphone is Wispr Flow’s job.
         </h2>
         <div className="prose-viva mt-4 max-w-3xl">
           <p>
@@ -192,6 +192,13 @@ export default function AboutPage() {
             changing the exam. The report quotes the transcript, not a recording.
           </p>
         </div>
+        <Link
+          href="/build"
+          className="mt-5 inline-flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.08em] text-red underline decoration-red/30 underline-offset-4 hover:decoration-red"
+        >
+          Read the Flow build log
+          <ArrowRight size={11} />
+        </Link>
       </section>
 
       <section className="mt-12">

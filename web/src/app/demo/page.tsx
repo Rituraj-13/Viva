@@ -109,10 +109,15 @@ export default function DemoPage() {
             with exact quotes.
           </p>
         </div>
-        <Link href="/new" className={buttonClass("primary")}>
-          Run a live viva
-          <ArrowRight size={14} />
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          <Link href="/new" className={buttonClass("primary")}>
+            Run a live viva
+            <ArrowRight size={14} />
+          </Link>
+          <Link href="/build" className={buttonClass("secondary")}>
+            Flow build log
+          </Link>
+        </div>
       </section>
 
       <p className="mt-8 max-w-2xl text-[11px] leading-relaxed text-ink-soft">

@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { ReportView } from "@/components/report-view";
+import { RememberViva } from "@/components/remember-viva";
 import { getAnonId } from "@/lib/anon";
+import { readinessScore } from "@/lib/scoring";
 import { transcriptFromSession } from "@/lib/session";
 import { getSession } from "@/lib/store";
 
@@ -31,9 +33,19 @@ export default async function ReportPage({
   }
 
   const transcript = transcriptFromSession(session);
+  const readiness = readinessScore(session.report.axes);
 
   return (
     <main className="report-page mx-auto max-w-[1020px] px-4 pb-16 pt-5 sm:px-5 md:pt-8">
+      <RememberViva
+        sessionId={session.id}
+        slug={session.slug}
+        filePath={session.filePath}
+        language={session.language}
+        createdAt={session.createdAt}
+        band={session.report.band}
+        score={readiness}
+      />
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3 no-print">
         <Link
           href="/"
