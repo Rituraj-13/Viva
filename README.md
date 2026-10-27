@@ -1,116 +1,205 @@
-# Viva
+<div align="center">
 
-## The oral exam for code
+# 🎓 Viva
 
-**Viva turns a code file into a five-question engineering interview.** Paste a file
-or choose one from a public GitHub repository, explain it out loud with Wispr Flow,
-and receive a scorecard with exact quotes, line references, adaptive follow-ups, and
-clear improvement areas.
+### *The oral exam for code.*
 
-> **If you can build it, can you speak it?**
+**Paste a file. Answer five questions out loud. Get a scorecard that quotes your words back — with exact line numbers.**
 
-Built for **WeMakeDevs × Wispr Flow — No Hands: The Wispr Challenge** (Builders
-track).
+[![Live App](https://img.shields.io/badge/🚀_Live_App-viva--oral--exam.vercel.app-black?style=for-the-badge)](https://viva-oral-exam.vercel.app)
+[![Demo Gallery](https://img.shields.io/badge/🎬_Watch_Demo-No_setup_needed-6366f1?style=for-the-badge)](https://viva-oral-exam.vercel.app/demo)
+[![Hackathon](https://img.shields.io/badge/WeMakeDevs_×_Wispr_Flow-No_Hands_Challenge-orange?style=for-the-badge)](https://viva-oral-exam.vercel.app)
 
-| | |
+> **"In 2026, anyone can ship code with AI. Almost nobody can defend a line of it.**
+> **Explanation is the scarce signal. Viva finds it."**
+
+</div>
+
+---
+
+## The Problem
+
+Code reviews test style. CI tests correctness. Linters test syntax.
+
+**Nothing tests understanding.**
+
+An engineering manager needs to know: does this person *own* their code, or did they just ship it? A developer preparing for interviews needs to know: can they defend what they built, or only describe it?
+
+Today the only answer is a 30-minute verbal interview, squeezed into a calendar slot, with no transcript, no evidence, and no consistency.
+
+**Viva is that interview — structured, instant, and voice-first.**
+
+---
+
+## What Viva Does
+
+<table>
+<tr>
+<td width="50%">
+
+**1. Ingest a file**
+Paste code directly, or browse any public GitHub repository and pick a file. The code stays visible throughout the entire exam.
+
+**2. Five deliberate questions**
+Viva builds a *question ladder* — five rungs, one concept each:
+
+| # | Rung | What it tests |
+|---|---|---|
+| 1 | **Comprehension** | What does this file do? Where does its responsibility stop? |
+| 2 | **Decision** | What structural choice shaped it, and what did it beat? |
+| 3 | **Failure** | What fails first, and on which line does it begin? |
+| 4 | **Change** | How would a concrete new requirement change it? |
+| 5 | **Ownership** | Pick one non-trivial line: why does it exist? What breaks without it? |
+
+</td>
+<td width="50%">
+
+**3. Answer out loud with Wispr Flow**
+No microphone permission. No audio recording. No transcription pipeline. Wispr Flow types into the answer box exactly as it would into any other field.
+
+**4. Adaptive probes**
+When an answer is vague, Viva quotes your own words back and asks the follow-up a great interviewer would ask. Up to 2 probes per question, 8 total turns — pressure without interrogation.
+
+**5. A scorecard with receipts**
+Every score points to a line of code and a sentence you actually said. Including the killer signal: **confident but wrong**.
+
+</td>
+</tr>
+</table>
+
+---
+
+## The Report
+
+Four axes. Every one backed by evidence.
+
+| Axis | What it measures |
 |---|---|
-| **Live app** | [viva-oral-exam.vercel.app](https://viva-oral-exam.vercel.app) |
-| **Scripted replays** | [Open the demo gallery](https://viva-oral-exam.vercel.app/demo) |
-| **Submission** | [`SUBMISSION.md`](./SUBMISSION.md) |
-| **Product brief** | [`PRD.md`](./PRD.md) |
-| **Prompt and schema notes** | [`prompts.md`](./prompts.md) |
+| 🧠 **Correctness** | Was the technical claim accurate against the code? |
+| 🔬 **Depth** | Did the answer reach below the surface? |
+| 🫱 **Ownership** | Did the candidate reason about choices, not just features? |
+| 💬 **Clarity** | Was the explanation coherent and precise? |
+
+Each axis shows:
+- An **exact quote** from your answer
+- The **code line range** used as evidence
+- A **confident but wrong** flag when a confident claim contradicts the code
+- **Key improvement areas** written as coaching, not generic feedback
+
+The full session transcript is saved. The report is shareable with a public link (redacted — no private scores or expected answers exposed).
 
 ---
 
-## Why Viva?
+## Why Voice?
 
-Most code tools explain code *to* you. Viva asks whether **you** can explain it:
-where the responsibility ends, why a design choice exists, what fails first, and
-what you would change.
+An oral exam is spoken by definition. Wispr Flow is not an add-on — it is the answer input. Remove it and the product becomes a text quiz.
 
-The code stays visible while the interview moves through five deliberate rungs:
+The integration is deliberate:
 
-1. **Comprehension** — what the file does and where its responsibility stops.
-2. **Decision** — the structural choice that shaped it and the alternative it beat.
-3. **Failure** — the first real failure path, anchored to the line where it begins.
-4. **Change** — a concrete new requirement, edge case, or load increase.
-5. **Ownership** — one non-trivial line: why it exists, what breaks without it,
-   and how to test it.
+- Viva requests **no microphone permission**
+- Records and stores **no audio**
+- Stores the transcript as **plain text**
+- Validates every report quote as an **exact substring** of what you said
 
-When an answer is vague, Viva asks an evidence-based follow-up. The session is
-bounded at five main questions, up to two probes per question, and eight total
-turns—enough pressure to reveal reasoning without turning the experience into an
-endless interrogation.
-
-### What the report gives you
-
-- Four signals: **correctness, depth, ownership, and clarity**.
-- An exact quote from the answer behind each axis.
-- The code line range used as evidence.
-- A dedicated **confident but wrong** signal when a confident claim contradicts
-  the code.
-- **Key improvement areas** written as practical coaching, not generic advice.
-- A complete transcript and a shareable, redacted public report.
-- A replay of the finished viva, so the reasoning can be reviewed like a film.
-
-Viva is an assistive signal—not a hiring verdict. It does not score accent,
-grammar, or English fluency.
+Voice changes the signal. Typing lets you edit and polish. Speaking reveals whether the understanding is actually there.
 
 ---
 
-## Voice without a microphone pipeline
+## Try It — Right Now
 
-Wispr Flow is the input layer. Flow types into the focused answer box exactly as it
-would into any other field.
+### 🎬 Watch three scripted demos (no setup, no quota, always available)
 
-Viva:
+Open [`/demo`](https://viva-oral-exam.vercel.app/demo) to watch three authored sessions:
 
-- requests **no microphone permission**;
-- records and stores **no audio**;
-- stores the transcript as text;
-- validates every report quote as an exact substring of that transcript.
+| Demo | What it shows |
+|---|---|
+| **Strong explanation** | A candidate who owns the code deeply |
+| **Partial explanation + probe** | Viva pushing for depth when an answer is surface-level |
+| **Confident but wrong** | The killer signal — confident, fluent, and factually incorrect |
 
-This keeps the product compatible with the challenge while keeping the data model
-simple, inspectable, and privacy-conscious.
+No microphone. No API key. No model calls. Deterministic and always available — even when a provider is rate-limited.
 
----
+### 🚀 Run a live viva
 
-## Try it
-
-### Scripted replay first
-
-Open [`/demo`](https://viva-oral-exam.vercel.app/demo) to watch three authored
-sessions without a microphone, API key, or model call. Replays include:
-
-- a strong explanation;
-- a partial explanation with a meaningful probe;
-- a confident-but-wrong answer.
-
-They are deterministic and always available—even when a provider is rate-limited.
-
-### Run a live viva
-
-1. Open `/new`.
-2. Choose a public GitHub repository and file, or paste code directly.
-3. Answer the five questions with Wispr Flow or by typing.
-4. Follow the adaptive probes when Viva pushes deeper.
-5. Review the report, replay the completed viva, or share the redacted report.
+1. Open [**`/new`**](https://viva-oral-exam.vercel.app/new)
+2. Choose a public GitHub repository and file, or paste code directly
+3. Answer five questions with **Wispr Flow** (or type, if you must)
+4. Follow adaptive probes when Viva pushes deeper
+5. Review your scorecard, replay the session, or share your redacted report
 
 ---
 
-## Local development
+## How It Works — Engineering
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                         VIVA SESSION FLOW                       │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  Code File  ──▶  Question Ladder  ──▶  Answer (Wispr Flow)     │
+│    (ingest)        (AI-generated,          (text input)        │
+│                    line-anchored)                               │
+│                                                                 │
+│                           │                                     │
+│                           ▼                                     │
+│                    Evaluation Engine                            │
+│                  (axes + evidence + probes)                     │
+│                           │                                     │
+│                           ▼                                     │
+│              Deterministic Report Scoring                       │
+│           (code, not a second model, owns scores)              │
+│                           │                                     │
+│                           ▼                                     │
+│         Scorecard with Quotes + Line References                 │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Provider Strategy
+
+Groq won the latency bake-off. Google Gemini is the automatic fallback. Anthropic is an optional reserve.
+
+| Provider | Role | Why |
+|---|---|---|
+| **Groq** (`gpt-oss-120b`) | Primary | Lowest latency; native Structured Outputs |
+| **Google** (`gemini-3.8-flash`) | Fallback | High quality; AI SDK adapter |
+| **Anthropic** | Reserve | Optional; enabled via config |
+
+Strict structured output schema on every provider:
+```ts
+response_format: {
+  type: "json_schema",
+  json_schema: { name: "evaluation", strict: true, schema: ... }
+}
+```
+Zod schemas are converted to JSON Schema and validated again after the response. If every configured provider fails, deterministic heuristics still produce a usable session — no broken states.
+
+### What is model-generated vs. deterministic?
+
+| Component | Owner |
+|---|---|
+| Question ladder | **Model** (line-anchored to your code) |
+| Per-answer evaluation (axes, quote, probe) | **Model** |
+| Final scores, evidence, band, improvement areas | **Application code** |
+
+The report's scores do not change because a second model rephrased them differently. Evidence is computed first, then rendered.
+
+---
+
+## Local Development
 
 ### Requirements
 
-- Node.js **22 or newer**
-- pnpm **9 or newer**
-- A Groq API key for the primary provider
-- A Google AI Studio key for fallback behavior
-- Optional: a Neon Postgres connection string
+- Node.js **22+**
+- pnpm **9+**
+- Groq API key (primary provider)
+- Google AI Studio key (fallback)
+- Neon Postgres (optional; file store used locally)
 
 ### Install and run
 
 ```bash
+git clone <repo-url>
 cd viva
 pnpm install
 cp .env.example web/.env.local
@@ -124,251 +213,198 @@ GROQ_API_KEY=your_groq_key
 GOOGLE_GENERATIVE_AI_API_KEY=your_google_key
 MODEL_FALLBACK=openai/gpt-oss-120b
 MODEL_SMART=gemini-3.8-flash
+# Leave DATABASE_URL empty to use local JSON store
 ```
-
-For the simplest local setup, leave `DATABASE_URL` empty or set it to the
-placeholder in `.env.example`. Sessions will be written to
-`web/.data/sessions.json`.
-
-Start the app:
 
 ```bash
-cd web
-pnpm dev
+cd web && pnpm dev
+# Open http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Demos at `/demo` — live sessions at `/new`.
 
-Useful checks:
+### Checks
 
 ```bash
-pnpm exec tsc --noEmit
-pnpm exec eslint .
-pnpm build
-pnpm start
+pnpm exec tsc --noEmit   # Type check
+pnpm exec eslint .        # Lint
+pnpm build && pnpm start  # Production build
 ```
-
-The three replay sessions are available at `/demo`; live ingestion starts at
-`/new`.
 
 ---
 
-## Configuration
+## Configuration Reference
 
-Copy [`./.env.example`](./.env.example) to `web/.env.local`. All provider keys
-are server-only and must never be exposed to the browser or committed.
+| Variable | Default | Purpose |
+|---|---|---|
+| `DATABASE_URL` | — | Neon/Postgres connection string. Empty = local JSON store. |
+| `AI_PROVIDER` | `groq` | Primary provider: `groq`, `google`, or `anthropic` |
+| `GROQ_API_KEY` | — | Primary Groq credential |
+| `GOOGLE_GENERATIVE_AI_API_KEY` | — | Google Gemini fallback credential |
+| `MODEL_FALLBACK` | `openai/gpt-oss-120b` | Groq model |
+| `MODEL_SMART` | `gemini-3.8-flash` | Google model |
+| `ANTHROPIC_API_KEY` / `ANTHROPIC_MODEL` | — | Optional reserve provider |
+| `ALLOW_CLAUDE_FALLBACK` | `false` | Enable Anthropic reserve |
+| `GITHUB_TOKEN` | — | Raises GitHub API limit from 60 → 5,000 req/hr |
+| `NEXT_PUBLIC_APP_URL` | — | Canonical app origin |
+| `VIVA_DATA_DIR` | — | Custom directory for local JSON store |
+| `MAX_SESSIONS_PER_DAY` | `20` | Per-browser live session limit (rolling window) |
+| `MAX_LIVE_SESSIONS_PER_DAY` | `20` | Global live session limit |
+| `MAX_TURNS_PER_HOUR` | `60` | Per-browser turn limit |
 
-| Variable | Purpose |
-|---|---|
-| `DATABASE_URL` | Neon/Postgres connection string. Empty or placeholder uses the local JSON store. |
-| `AI_PROVIDER` | Provider order: `groq`, `google`, or `anthropic`. |
-| `GROQ_API_KEY` | Primary Groq credential. |
-| `GOOGLE_GENERATIVE_AI_API_KEY` | Google Gemini fallback credential. |
-| `MODEL_FALLBACK` | Groq model; defaults to `openai/gpt-oss-120b`. |
-| `MODEL_SMART` | Google model; defaults to `gemini-3.8-flash`. |
-| `ANTHROPIC_API_KEY` / `ANTHROPIC_MODEL` | Optional reserve provider. |
-| `ALLOW_CLAUDE_FALLBACK` | Enables the Anthropic reserve when set to `true`. |
-| `GITHUB_TOKEN` | Optional; raises GitHub API access from 60 to 5,000 requests/hour. |
-| `NEXT_PUBLIC_APP_URL` | Canonical app origin. |
-| `VIVA_DATA_DIR` | Optional directory for the local JSON store. |
-| `MAX_SESSIONS_PER_DAY` | Per-anonymous-browser live-session limit; default 20. |
-| `MAX_LIVE_SESSIONS_PER_DAY` | Global live-session limit; default 20. |
-| `MAX_TURNS_PER_HOUR` | Per-anonymous-browser turn limit; default 60. |
-
-The limits are rolling windows, not midnight-reset counters. The anonymous browser
-cookie is used for ownership and quota checks; there is no login system.
-
----
-
-## AI architecture
-
-### Provider strategy
-
-Groq is the primary provider because it won the latency bake-off. Google is the
-automatic fallback, and Anthropic is an optional reserve.
-
-Groq uses the **native `groq-sdk`** with Groq Structured Outputs:
-
-```ts
-response_format: {
-  type: "json_schema",
-  json_schema: {
-    name: "evaluation",
-    strict: true,
-    schema: ...
-  }
-}
-```
-
-The Zod schemas are converted to JSON Schema and validated again after the response
-arrives. Strict mode requires every property to be required, which keeps provider
-responses predictable in production.
-
-Google and Anthropic use the AI SDK structured-output adapter. Every provider has a
-bounded retry path with explicit error logs. If all configured providers fail,
-deterministic heuristics still produce a usable ladder, evaluation, and report
-rather than a broken session.
-
-### What is model-generated?
-
-- The question ladder is model-generated and line-anchored.
-- Each answer is evaluated against a focused excerpt rather than an unnecessarily
-  large file payload.
-- Evaluations include axis scores, an exact answer quote, missing concepts, and a
-  follow-up when useful.
-- The final report’s scores, evidence, band, axes, and improvement areas are owned
-  by application code.
-
-The report’s closing copy is deliberately conservative: the system does not ask a
-second model to invent a narrative from scratch. Evidence is computed first, then
-rendered into a report.
-
----
-
-## Data model and persistence
-
-With a valid `DATABASE_URL`, the app uses Neon Postgres through
-`@neondatabase/serverless`. The first request creates the table automatically—no
-migration command is required.
-
-All session data is stored in:
-
-```text
-viva_sessions.data  -- JSONB containing the complete SessionData object
-```
-
-That JSON includes the source code, questions, answers, evaluations, probes, report,
-timestamps, and model labels. The table also stores indexed identity and lifecycle
-fields:
-
-```text
-id, slug, anon_id, status, created_at, updated_at
-```
-
-Relevant routes:
-
-```text
-POST /api/sessions              Create a session and generate the ladder
-POST /api/sessions/:id/turns   Grade an answer and optionally create a probe
-POST /api/sessions/:id/finish  Persist the deterministic final report
-GET  /api/reports/:slug        Return a redacted public report
-DELETE /api/sessions/:id       Delete an owned session
-GET  /api/health               Show store and configured providers
-```
-
-For local development without Postgres, the same data shape is stored at
-`web/.data/sessions.json`. This file store is not durable on Vercel; production must
-use Neon.
-
----
-
-## Security and privacy boundaries
-
-- Private session routes require the anonymous owner cookie.
-- Public report routes expose a redacted report, not private expected points,
-  red flags, evaluations, or anonymous identity.
-- The source code is treated as untrusted prompt data; instructions inside a code
-  file are not followed.
-- User answers are bounded and quotes are checked before entering a report.
-- Delete removes the stored session and its public report.
-- API keys remain server-side.
+Limits are **rolling windows**, not midnight-reset counters. No login system; anonymous cookie handles ownership and quota.
 
 ---
 
 ## Deploy to Vercel
 
-The linked production app is deployed from `web/`, which has its own
-`package.json` and `pnpm-lock.yaml`.
+```bash
+# 1. Create a Neon project and copy the pooled connection string
+# 2. Create a Vercel project pointing to web/
 
-1. Create or claim a Neon project and copy its pooled connection string.
-2. Create a Vercel project for `web/`.
-3. Add these **Production** variables:
-   ```text
-   DATABASE_URL
-   AI_PROVIDER=groq
-   GROQ_API_KEY
-   GOOGLE_GENERATIVE_AI_API_KEY
-   MODEL_FALLBACK=openai/gpt-oss-120b
-   MODEL_SMART=gemini-3.8-flash
-   NEXT_PUBLIC_APP_URL=https://your-domain.vercel.app
-   MAX_SESSIONS_PER_DAY=20
-   ```
-4. Deploy:
-   ```bash
-   cd viva/web
-   pnpm dlx vercel login
-   pnpm dlx vercel --prod
-   ```
-5. Verify:
-   ```bash
-   curl https://your-domain.vercel.app/api/health
-   ```
-
-Expected health output includes:
-
-```json
-{
-  "ok": true,
-  "store": "postgres",
-  "llm": [
-    "groq:openai/gpt-oss-120b",
-    "google:gemini-3.8-flash"
-  ]
-}
+cd viva/web
+pnpm dlx vercel login
+pnpm dlx vercel --prod
 ```
 
-The health endpoint confirms configuration, not that a provider has remaining
-quota. For provider failures, inspect Vercel Function Logs while creating a new
-session. The app logs the provider, retry attempt, error name, message, and cause.
+Add these **Production** environment variables in the Vercel dashboard:
+
+```text
+DATABASE_URL=<neon-pooled-connection-string>
+AI_PROVIDER=groq
+GROQ_API_KEY=<key>
+GOOGLE_GENERATIVE_AI_API_KEY=<key>
+MODEL_FALLBACK=openai/gpt-oss-120b
+MODEL_SMART=gemini-3.8-flash
+NEXT_PUBLIC_APP_URL=https://your-domain.vercel.app
+MAX_SESSIONS_PER_DAY=20
+```
+
+Verify:
+
+```bash
+curl https://your-domain.vercel.app/api/health
+# {"ok":true,"store":"postgres","llm":["groq:openai/gpt-oss-120b","google:gemini-3.8-flash"]}
+```
+
+The health endpoint confirms configuration. For provider failures, inspect Vercel Function Logs — the app logs provider, retry attempt, error name, message, and cause.
 
 ---
 
-## Engineering trade-offs
+## API Reference
 
-| Decision | Why |
+| Method | Route | Purpose |
+|---|---|---|
+| `POST` | `/api/sessions` | Create a session and generate the question ladder |
+| `POST` | `/api/sessions/:id/turns` | Grade an answer; optionally create a probe |
+| `POST` | `/api/sessions/:id/finish` | Persist the deterministic final report |
+| `GET` | `/api/reports/:slug` | Return a redacted public report |
+| `DELETE` | `/api/sessions/:id` | Delete an owned session |
+| `GET` | `/api/health` | Show store type and configured providers |
+
+---
+
+## Data Model
+
+Sessions are stored in Neon Postgres as a JSONB document:
+
+```text
+viva_sessions
+├── id, slug, anon_id          -- indexed identity fields
+├── status                     -- created | active | finished
+├── created_at, updated_at     -- lifecycle timestamps
+└── data (JSONB)               -- complete SessionData
+    ├── source                 -- original code file
+    ├── questions[]            -- the 5-rung ladder (line-anchored)
+    ├── turns[]                -- answers + evaluations + probes
+    └── report                 -- final scorecard
+```
+
+The table is auto-created on first request — no migration command needed.
+
+For local development, the same shape is written to `web/.data/sessions.json`.
+
+---
+
+## Security & Privacy
+
+| Boundary | How |
 |---|---|
-| One focused file per viva | Keeps the interview concrete and the evidence auditable. |
-| Text input through Wispr Flow | No audio retention or transcription pipeline is needed. |
-| Strict structured output for Groq | Prevents malformed provider responses from reaching scoring code. |
-| Deterministic report scoring | Evidence and scores should not change because a second model phrased them differently. |
-| JSONB session document | The full transcript and report evolve together while indexes cover lookup paths. |
-| Scripted replays | Judges can experience the product without credentials, microphone access, or model quota. |
-| Anonymous cookie ownership | Fast, frictionless hackathon UX without pretending to provide full account security. |
+| Private session access | Requires anonymous owner cookie |
+| Public report | Exposes scorecard only — no expected answers, red flags, or private evaluations |
+| Source code | Treated as untrusted prompt data; instructions inside a file are not followed |
+| API keys | Server-side only; never exposed to the browser |
+| Data deletion | `DELETE /api/sessions/:id` removes session and public report completely |
 
 ---
 
-## Known limits
+## Engineering Trade-offs
 
-- One file per session; this is an oral code exam, not a repository-wide review.
-- GitHub ingestion supports public repositories; paste is the universal fallback.
-- Free provider quotas can still be exhausted. Scripted replays remain available.
-- Clearing the anonymous cookie can make a private session inaccessible from that
-  browser.
-- Viva is an assistive signal, not a hiring decision.
+| Decision | Rationale |
+|---|---|
+| One focused file per viva | Keeps the interview concrete and the evidence auditable |
+| Text input via Wispr Flow | No audio pipeline, no retention, no transcription cost |
+| Strict structured output | Prevents malformed provider responses from reaching scoring logic |
+| Deterministic report scoring | Scores are owned by application code, not a second LLM pass |
+| JSONB session document | Full transcript and report evolve together; indexes cover all lookup paths |
+| Scripted replay demos | Judges can experience the product without credentials, microphone, or model quota |
+| Anonymous cookie ownership | Frictionless UX; no false promise of account security |
 
 ---
 
-## Project layout
+## Known Limits
+
+- **One file per session** — this is an oral code exam, not a repository-wide review
+- **Public repos only** — GitHub ingestion requires public access; paste is the universal fallback
+- **Provider quota** — free tier quotas can be exhausted; scripted replays are always available
+- **Cookie dependency** — clearing the anonymous cookie can make a private session inaccessible from that browser
+- **Assistive signal only** — Viva is not a hiring verdict; it does not score accent, grammar, or English fluency
+
+---
+
+## Project Layout
 
 ```text
 viva/
 ├── web/
 │   ├── src/app/                 Next.js routes and API handlers
-│   ├── src/components/          Ingest, viva, replay, and report UI
-│   ├── src/lib/ai/              Providers, schemas, ladder, evaluation
+│   │   ├── api/                 sessions, turns, finish, reports, health
+│   │   ├── new/                 ingest and live viva UI
+│   │   ├── demo/                scripted replay gallery
+│   │   ├── r/                   public report view
+│   │   └── s/                   private session view
+│   ├── src/components/          Ingest, viva, replay, report, and share UI
+│   ├── src/lib/ai/              Providers, schemas, ladder, evaluation engine
 │   ├── src/lib/store.ts         Neon/Postgres and local JSON persistence
+│   ├── src/lib/scoring.ts       Deterministic report scoring
 │   ├── src/fixtures/seeds.ts    Deterministic scripted replay sessions
 │   └── package.json
-├── bakeoff/                     Provider quality/latency comparison
-├── .env.example                 Environment template
-├── PRD.md                       Product brief
-├── prompts.md                   Prompt and schema notes
+├── bakeoff/                     Provider quality and latency comparison scripts
+├── .env.example                 Environment variable template
+├── PRD.md                       Full product requirements document
+├── prompts.md                   Prompt engineering notes and Zod schemas
 └── SUBMISSION.md                Hackathon submission copy
 ```
 
 ---
 
-## The one-line pitch
+## Built With
 
-> **Viva is a voice-first oral exam for code: five questions, exact receipts, and
-> enough pressure to tell whether the understanding is real.**
+[![Next.js](https://img.shields.io/badge/Next.js_15-black?style=flat-square&logo=next.js)](https://nextjs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
+[![Neon](https://img.shields.io/badge/Neon_Postgres-00E5CC?style=flat-square)](https://neon.tech)
+[![Groq](https://img.shields.io/badge/Groq-F55036?style=flat-square)](https://groq.com)
+[![Gemini](https://img.shields.io/badge/Google_Gemini-4285F4?style=flat-square&logo=google)](https://ai.google.dev)
+[![Vercel](https://img.shields.io/badge/Vercel-black?style=flat-square&logo=vercel)](https://vercel.com)
+[![Wispr Flow](https://img.shields.io/badge/Wispr_Flow-voice_input-purple?style=flat-square)](https://wispr.flow)
+
+---
+
+<div align="center">
+
+**Built for [WeMakeDevs × Wispr Flow — No Hands: The Wispr Challenge](https://viva-oral-exam.vercel.app) · Builders track**
+
+*If you can build it, can you speak it?*
+
+</div>
