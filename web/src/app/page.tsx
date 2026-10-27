@@ -109,6 +109,12 @@ export default function HomePage() {
               <span className="mono-label text-ink-soft">
                 No signup · five questions
               </span>
+              <Link
+                href="/pitch"
+                className="font-mono text-[9px] uppercase tracking-[0.09em] text-red underline decoration-red/30 underline-offset-4 hover:decoration-red"
+              >
+                Judging? Start here
+              </Link>
             </div>
 
             <h1 className="mt-7 font-serif text-[clamp(3.2rem,7.4vw,6.2rem)] leading-[0.88] tracking-[-0.058em]">

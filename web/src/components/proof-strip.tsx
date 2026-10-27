@@ -56,7 +56,13 @@ export function ProofStrip() {
           </div>
           <p className="max-w-sm text-sm leading-relaxed text-ink-soft">
             Watch the demo, read a finished report, or take the sample exam in
-            about a minute.
+            about a minute.{" "}
+            <Link
+              href="/pitch"
+              className="font-mono text-[9px] uppercase tracking-[0.08em] text-red underline decoration-red/30 underline-offset-4 hover:decoration-red"
+            >
+              Read the judge brief
+            </Link>
           </p>
         </div>
 

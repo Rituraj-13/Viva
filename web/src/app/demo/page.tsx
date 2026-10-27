@@ -115,7 +115,7 @@ export default function DemoPage() {
             <ArrowRight size={14} />
           </Link>
           <Link href="/build" className={buttonClass("secondary")}>
-            Flow build log
+            Wispr Flow build log
           </Link>
         </div>
       </section>

@@ -18,11 +18,3 @@ export function reportAsset() {
     ? { href: `/r/${slug}`, external: false, real: true }
     : { href: "/demo/auth", external: false, real: false };
 }
-
-export function flowUsage() {
-  return {
-    cardUrl: trimmed(process.env.FLOW_USAGE_CARD_URL),
-    words: trimmed(process.env.FLOW_WORDS_DICTATED),
-    timeSaved: trimmed(process.env.FLOW_TIME_SAVED),
-  };
-}

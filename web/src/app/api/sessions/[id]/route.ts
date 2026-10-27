@@ -1,5 +1,6 @@
 import { connection, NextResponse } from "next/server";
 import { handleRouteError, sessionForOwner } from "@/lib/api";
+import { refreshReportEvidence } from "@/lib/scoring";
 import { computeState, toPublicSession } from "@/lib/session";
 import { deleteSession } from "@/lib/store";
 
@@ -11,8 +12,13 @@ export async function GET(_request: Request, { params }: Context) {
   try {
     const { id } = await params;
     const session = await sessionForOwner(id);
+    const report = session.report
+      ? refreshReportEvidence(session, session.report)
+      : undefined;
     return NextResponse.json({
-      session: toPublicSession(session),
+      session: report
+        ? { ...toPublicSession(session), report }
+        : toPublicSession(session),
       state: computeState(session),
     });
   } catch (error) {

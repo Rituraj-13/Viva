@@ -3,6 +3,7 @@ import { connection } from "next/server";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ReportView } from "@/components/report-view";
+import { refreshReportEvidence } from "@/lib/scoring";
 import { transcriptFromSession } from "@/lib/session";
 import { getSessionBySlug } from "@/lib/store";
 
@@ -17,28 +18,29 @@ export async function generateMetadata({
   const { slug } = await params;
   const session = await getSessionBySlug(slug);
   if (!session?.report) return { title: "Report not found" };
+  const report = refreshReportEvidence(session, session.report);
 
   const image = {
     url: `/r/${slug}/opengraph-image`,
     width: 1200,
     height: 630,
-    alt: `Viva report: ${session.report.headline}`,
+    alt: `Viva report: ${report.headline}`,
   };
 
   return {
-    title: session.report.headline,
-    description: session.report.summary,
+    title: report.headline,
+    description: report.summary,
     robots: { index: false, follow: false },
     openGraph: {
-      title: session.report.headline,
-      description: session.report.summary,
+      title: report.headline,
+      description: report.summary,
       type: "article",
       images: [image],
     },
     twitter: {
       card: "summary_large_image",
-      title: session.report.headline,
-      description: session.report.summary,
+      title: report.headline,
+      description: report.summary,
       images: [image.url],
     },
   };
@@ -57,6 +59,7 @@ export default async function PublicReportPage({
     notFound();
   }
 
+  const report = refreshReportEvidence(session, session.report);
   const transcript = transcriptFromSession(session);
 
   return (
@@ -89,7 +92,7 @@ export default async function PublicReportPage({
           createdAt: session.createdAt,
           repoUrl: session.repoUrl,
         }}
-        report={session.report}
+        report={report}
         transcript={transcript}
         mode="public"
         slug={session.slug}

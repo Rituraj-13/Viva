@@ -1,6 +1,6 @@
 import { connection, NextResponse } from "next/server";
 import { ApiError, handleRouteError, sessionForOwner } from "@/lib/api";
-import { computeReport } from "@/lib/scoring";
+import { computeReport, refreshReportEvidence } from "@/lib/scoring";
 import { saveSession } from "@/lib/store";
 import { elapsedMs, logApi, serverTiming } from "@/lib/timing";
 
@@ -18,13 +18,14 @@ export async function POST(_request: Request, { params }: Context) {
     dbMs += elapsedMs(sessionStartedAt);
 
     if (session.report) {
+      const report = refreshReportEvidence(session, session.report);
       logApi("POST /api/sessions/:id/finish", startedAt, {
         status: 200,
         dbMs,
         cached: true,
       });
       return NextResponse.json(
-        { slug: session.slug, report: session.report },
+        { slug: session.slug, report },
         {
           headers: {
             "Server-Timing": serverTiming({

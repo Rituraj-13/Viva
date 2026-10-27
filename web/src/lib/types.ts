@@ -76,6 +76,8 @@ export type Report = {
   headline: string;
   summary: string;
   axes: Axis[];
+  /** Bumped when report evidence is recomputed. Missing on older reports. */
+  version?: number;
   confidentButWrong: { questionIndex: number; quote: string; why: string } | null;
   quietlyRight: { questionIndex: number; quote: string } | null;
   bestMoment: { questionIndex: number; quote: string } | null;

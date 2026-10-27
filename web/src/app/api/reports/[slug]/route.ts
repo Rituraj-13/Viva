@@ -1,5 +1,6 @@
 import { connection, NextResponse } from "next/server";
 import { handleRouteError } from "@/lib/api";
+import { refreshReportEvidence } from "@/lib/scoring";
 import { toPublicSession } from "@/lib/session";
 import { getSessionBySlug } from "@/lib/store";
 
@@ -24,8 +25,9 @@ export async function GET(_request: Request, { params }: Context) {
       );
     }
 
+    const report = refreshReportEvidence(session, session.report);
     return NextResponse.json(
-      { session: toPublicSession(session), report: session.report },
+      { session: { ...toPublicSession(session), report }, report },
       {
         headers: {
           "Cache-Control": "no-store",

@@ -4,7 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { ReportView } from "@/components/report-view";
 import { RememberViva } from "@/components/remember-viva";
 import { getAnonId } from "@/lib/anon";
-import { readinessScore } from "@/lib/scoring";
+import { readinessScore, refreshReportEvidence } from "@/lib/scoring";
 import { transcriptFromSession } from "@/lib/session";
 import { getSession } from "@/lib/store";
 
@@ -33,7 +33,8 @@ export default async function ReportPage({
   }
 
   const transcript = transcriptFromSession(session);
-  const readiness = readinessScore(session.report.axes);
+  const report = refreshReportEvidence(session, session.report);
+  const readiness = readinessScore(report.axes);
 
   return (
     <main className="report-page mx-auto max-w-[1020px] px-4 pb-16 pt-5 sm:px-5 md:pt-8">
@@ -43,7 +44,7 @@ export default async function ReportPage({
         filePath={session.filePath}
         language={session.language}
         createdAt={session.createdAt}
-        band={session.report.band}
+        band={report.band}
         score={readiness}
       />
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3 no-print">
@@ -66,7 +67,7 @@ export default async function ReportPage({
           createdAt: session.createdAt,
           repoUrl: session.repoUrl,
         }}
-        report={session.report}
+        report={report}
         transcript={transcript}
         mode="owner"
         sessionId={session.id}

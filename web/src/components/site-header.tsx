@@ -17,6 +17,12 @@ export function SiteHeader() {
 
         <nav className="ml-auto flex items-center gap-1 sm:gap-2">
           <Link
+            href="/pitch"
+            className="hidden px-3 py-2 font-mono text-[11px] uppercase tracking-[0.1em] text-ink-soft transition-colors hover:text-ink sm:inline"
+          >
+            Pitch
+          </Link>
+          <Link
             href="/demo"
             className="hidden px-3 py-2 font-mono text-[11px] uppercase tracking-[0.1em] text-ink-soft transition-colors hover:text-ink sm:inline"
           >

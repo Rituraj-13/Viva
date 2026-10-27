@@ -7,6 +7,7 @@ import { readinessScore } from "@/lib/scoring";
 import { reportToMarkdown } from "@/lib/report-markdown";
 import { AxisCard } from "./axis-card";
 import { ReportActions } from "./report-actions";
+import { ShareLink } from "./share-link";
 import { Badge, Kicker, Stamp, buttonClass } from "./ui";
 
 const bandCopy = {
@@ -103,15 +104,7 @@ export function ReportView({
         </p>
       </header>
 
-      {mode !== "seed" && slug && (
-        <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1 border border-rule bg-paper-deep/35 px-4 py-3">
-          <span className="mono-label text-ink-soft">Share link</span>
-          <code className="font-mono text-[11px] text-ink">/r/{slug}</code>
-          <span className="text-[11px] text-ink-soft">
-            Anyone with this link can read the report. The live session stays private.
-          </span>
-        </div>
-      )}
+      {mode !== "seed" && slug && <ShareLink slug={slug} />}
 
       <section className="mt-9 grid gap-4 lg:grid-cols-[0.72fr_1.28fr]">
         <div className="paper-card-deep flex flex-col justify-between p-5">

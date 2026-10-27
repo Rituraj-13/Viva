@@ -8,12 +8,12 @@ import {
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Badge, Kicker, Stamp, buttonClass } from "@/components/ui";
-import { demoAsset, flowUsage, reportAsset } from "@/lib/showcase";
+import { demoAsset, reportAsset } from "@/lib/showcase";
 
 export const metadata: Metadata = {
-  title: "Flow build log",
+  title: "Wispr Flow build log",
   description:
-    "What Viva dictated with Wispr Flow, what changed because it was spoken, and what shipped. Includes the Flow usage card.",
+    "What Viva dictated with Wispr Flow, what changed because it was spoken, and what shipped. Includes the voice receipt.",
 };
 
 const entries = [
@@ -48,28 +48,31 @@ const entries = [
   {
     n: "05",
     title: "No fake waveform",
-    said: "Do not fake a waveform. Flow is the microphone. Viva should only see the text.",
+    said: "Do not fake a waveform. Wispr Flow is the microphone. Viva should only see the text.",
     shipped:
       "The answer composer is a plain textarea. Wispr Flow types into whatever is focused; the candidate can edit the text before sending it. No microphone permission, no audio recording, no speech model on the server.",
   },
   {
     n: "06",
-    title: "Flow carried the talking. I typed the code.",
+    title: "Wispr Flow carried the talking. I typed the code.",
     said: "I'll dictate the spec, the rubric, the probe rule, the page copy, and the demo script. I'll type the code.",
     shipped:
-      "That is the honest split. Flow handled the thinking-out-loud parts of the build; the editor handled the implementation. The quotes here are lightly cleaned from those dictations — the decisions and outcomes are the ones in the repo.",
+      "That is the honest split. Wispr Flow handled the thinking-out-loud parts of the build; the editor handled the implementation. The quotes here are lightly cleaned from those dictations — the decisions and outcomes are the ones in the repo.",
   },
 ];
 
+const RECEIPT_BARS = [
+  2, 1, 3, 1, 2, 4, 1, 2, 3, 1, 1, 4, 2, 1, 3, 2, 1, 1, 4, 1, 2, 3, 1, 2,
+];
+
 export default function BuildPage() {
-  const { cardUrl, words, timeSaved } = flowUsage();
   const demo = demoAsset();
   const report = reportAsset();
 
   return (
     <main className="mx-auto max-w-[1180px] px-5 py-10 md:px-8 md:py-14">
       <div className="max-w-3xl">
-        <Kicker>Flow build log</Kicker>
+        <Kicker>Wispr Flow build log</Kicker>
         <h1 className="mt-4 font-serif text-[clamp(2.6rem,6vw,4.8rem)] leading-[0.93] tracking-[-0.05em]">
           Built by talking.
           <br />
@@ -128,73 +131,84 @@ export default function BuildPage() {
         </div>
 
         <aside className="lg:sticky lg:top-24">
-          <div className="paper-card p-5">
+          <div className="paper-card relative overflow-hidden p-5">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <span className="mono-label text-ink-soft">
-                Wispr Flow · usage card
-              </span>
+              <span className="mono-label text-ink-soft">Voice receipt</span>
               <Badge tone="red">
                 <Mic size={10} />
                 Wispr Flow
               </Badge>
             </div>
 
-            {cardUrl ? (
-              <>
-                {/* The card is an external screenshot provided at deploy time. */}
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={cardUrl}
-                  alt="Wispr Flow usage card for the No Hands challenge"
-                  className="mt-4 w-full border border-rule"
-                />
-                <p className="mt-3 text-[11px] leading-relaxed text-ink-soft">
-                  Flow Insights for the challenge window: words dictated and
-                  time saved.
-                </p>
-              </>
-            ) : (
-              <>
-                <div className="mt-4 border border-dashed border-rule bg-paper/60 p-5">
-                  <p className="font-serif text-2xl leading-tight tracking-[-0.03em]">
-                    Attached to the submission packet.
-                  </p>
-                  <p className="mt-3 text-sm leading-relaxed text-ink-soft">
-                    The card is a screenshot of Flow Insights for the challenge
-                    window. It travels with the submission rather than being
-                    hosted at a public URL.
-                  </p>
-                </div>
-                <p className="mt-3 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-soft">
-                  Screenshot attached · words dictated and time saved
-                </p>
-              </>
-            )}
+            <p className="mt-3 font-mono text-[8px] uppercase tracking-[0.12em] text-ink-soft/70">
+              No hands · builders track · 16–31 Oct 2026
+            </p>
 
-            {(words || timeSaved) && (
-              <div className="mt-4 grid grid-cols-2 gap-2 border-t border-rule pt-4">
-                {words && (
-                  <div>
-                    <p className="font-serif text-2xl leading-none tracking-[-0.04em]">
-                      {words}
-                    </p>
-                    <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-soft">
-                      Words dictated
-                    </p>
-                  </div>
-                )}
-                {timeSaved && (
-                  <div>
-                    <p className="font-serif text-2xl leading-none tracking-[-0.04em]">
-                      {timeSaved}
-                    </p>
-                    <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.08em] text-ink-soft">
-                      Time saved
-                    </p>
-                  </div>
-                )}
-              </div>
-            )}
+            <div className="mt-4 space-y-1.5 border-y border-dashed border-rule py-3 font-mono text-[10px] uppercase tracking-[0.05em]">
+              {[
+                ["Spec + user story", "spoken"],
+                ["Five rungs", "spoken"],
+                ["Rubric wording", "spoken"],
+                ["Probe rule", "spoken"],
+                ["Demo shot list", "spoken"],
+                ["Implementation", "typed"],
+              ].map(([label, mode]) => (
+                <div
+                  key={label}
+                  className="flex items-baseline justify-between gap-3"
+                >
+                  <span className="text-ink-soft">{label}</span>
+                  <span
+                    aria-hidden="true"
+                    className="min-w-3 flex-1 border-b border-dotted border-rule/80"
+                  />
+                  <span
+                    className={
+                      mode === "typed" ? "text-ink-soft" : "text-red"
+                    }
+                  >
+                    {mode}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-4 flex items-baseline justify-between gap-3">
+              <span className="font-serif text-lg tracking-[-0.02em]">
+                Total
+              </span>
+              <span className="font-serif text-lg italic tracking-[-0.02em] text-red">
+                one honest split
+              </span>
+            </div>
+
+            <div className="mt-3 flex justify-end">
+              <span className="-rotate-3 border-2 border-red/70 px-2.5 py-1 font-mono text-[8px] uppercase tracking-[0.16em] text-red">
+                Paid in speech
+              </span>
+            </div>
+
+            <div className="mt-4 flex h-8 items-end gap-[2px]" aria-hidden="true">
+              {RECEIPT_BARS.map((bar, index) => (
+                <span
+                  key={index}
+                  className="block bg-ink/70"
+                  style={{
+                    width: `${bar}px`,
+                    height: `${10 + (index % 5) * 3}px`,
+                  }}
+                />
+              ))}
+            </div>
+            <div className="mt-1.5 flex items-center justify-between font-mono text-[8px] uppercase tracking-[0.1em] text-ink-soft/60">
+              <span>Viva / Wispr Flow</span>
+              <span>No. 001</span>
+            </div>
+
+            <p className="mt-4 text-[11px] leading-relaxed text-ink-soft">
+              Not a usage metric — a receipt for the voice work. The Wispr Flow
+              Insights screenshot travels with the submission packet.
+            </p>
 
             <a
               href="https://wisprflow.ai"
@@ -219,7 +233,7 @@ export default function BuildPage() {
       </section>
 
       <section className="mt-14 border-t border-rule pt-10">
-        <Kicker>Why Flow is the right input</Kicker>
+        <Kicker>Why Wispr Flow is the right input</Kicker>
         <div className="mt-6 grid gap-4 md:grid-cols-3">
           {[
             {
@@ -228,7 +242,7 @@ export default function BuildPage() {
             },
             {
               title: "No audio leaves the browser",
-              body: "Flow handles dictation at the OS level and inserts text. Viva never requests the microphone, records audio, or runs a speech model.",
+              body: "Wispr Flow handles dictation at the OS level and inserts text. Viva never requests the microphone, records audio, or runs a speech model.",
             },
             {
               title: "Edits stay editable",
@@ -252,7 +266,7 @@ export default function BuildPage() {
         <div className="paper-card p-5">
           <Quote size={16} className="text-red" />
           <h2 className="mt-4 font-serif text-2xl tracking-[-0.03em]">
-            What Flow did
+            What Wispr Flow did
           </h2>
           <ul className="mt-3 space-y-2.5 text-sm leading-relaxed text-ink-soft">
             {[
@@ -271,10 +285,10 @@ export default function BuildPage() {
 
         <div className="paper-card p-5">
           <h2 className="font-serif text-2xl tracking-[-0.03em]">
-            What Flow did not do
+            What Wispr Flow did not do
           </h2>
           <p className="mt-3 text-sm leading-relaxed text-ink-soft">
-            Flow did not write the code, invent the scores, or replace the
+            Wispr Flow did not write the code, invent the scores, or replace the
             editor. It carried the thinking-out-loud parts of the build — the
             framing, the rules, the copy, and the demo. That split is the honest
             one, and it is the same split the product asks of its users.

@@ -18,6 +18,8 @@ const AXIS_LABELS: Record<AxisKey, string> = {
 
 const AXIS_ORDER: AxisKey[] = ["correctness", "depth", "ownership", "clarity"];
 
+export const REPORT_VERSION = 2;
+
 function round1(n: number) {
   return Math.round(n * 10) / 10;
 }
@@ -31,6 +33,32 @@ function evaluated(session: SessionData) {
   return session.turns.filter((t): t is Turn & { evaluation: Evaluation } =>
     Boolean(t.evaluation),
   );
+}
+
+function normalizeQuote(quote: string) {
+  return quote.replace(/\s+/g, " ").trim().toLowerCase();
+}
+
+/**
+ * One answer can be the best evidence for several axes, but each axis should
+ * show a different quote. Walk the ranked turns for the axis and take the first
+ * quote that no other axis has used yet. If the transcript really has fewer
+ * distinct quotes than axes, reuse the top quote rather than inventing one.
+ */
+function evidenceForAxis(
+  ranked: Array<Turn & { evaluation: Evaluation }>,
+  usedQuotes: Set<string>,
+) {
+  const withQuote = ranked.filter(
+    (turn) => turn.evaluation.quote.trim().length > 0,
+  );
+  const distinct = withQuote.find(
+    (turn) => !usedQuotes.has(normalizeQuote(turn.evaluation.quote)),
+  );
+  const chosen = distinct ?? withQuote[0] ?? ranked[0];
+  const quote = chosen?.evaluation.quote.trim();
+  if (quote) usedQuotes.add(normalizeQuote(quote));
+  return chosen;
 }
 
 export function readinessScore(axes: Axis[]) {
@@ -55,13 +83,14 @@ export function bandFor(score: number): Report["band"] {
 function buildAxes(session: SessionData): Axis[] {
   const turns = evaluated(session);
   const usedGaps = new Set<string>();
+  const usedQuotes = new Set<string>();
   return AXIS_ORDER.map((key) => {
     const scores = turns.map((t) => t.evaluation[key]);
     const score = round1(average(scores));
     const sorted = [...turns].sort(
       (a, b) => b.evaluation[key] - a.evaluation[key],
     );
-    const best = sorted[0];
+    const best = evidenceForAxis(sorted, usedQuotes);
     const question = best
       ? session.questions.find((q) => q.id === best.questionId)
       : undefined;
@@ -275,6 +304,7 @@ export function computeReport(session: SessionData, copy?: ReportCopy): Report {
     headline: generated.headline,
     summary: generated.summary,
     axes,
+    version: REPORT_VERSION,
     confidentButWrong: cbw
       ? {
           questionIndex: indexOf(cbw),
@@ -306,4 +336,24 @@ export function computeReport(session: SessionData, copy?: ReportCopy): Report {
 
 export function scoreToPercent(score: number) {
   return Math.round(clamp(score / 4, 0, 1) * 100);
+}
+
+/**
+ * Reports created before the evidence selection fix keep the old duplicate
+ * axis quotes forever because `/finish` returns the cached report. Recompute
+ * only the axis evidence (scores, copy, and createdAt stay untouched) so an
+ * existing share link starts showing distinct quotes without a redo.
+ */
+export function refreshReportEvidence(
+  session: SessionData,
+  report: Report,
+): Report {
+  if (report.version === REPORT_VERSION) return report;
+  if (evaluated(session).length === 0) return report;
+
+  return {
+    ...report,
+    version: REPORT_VERSION,
+    axes: buildAxes(session),
+  };
 }

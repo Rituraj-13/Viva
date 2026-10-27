@@ -196,7 +196,7 @@ export default function AboutPage() {
           href="/build"
           className="mt-5 inline-flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.08em] text-red underline decoration-red/30 underline-offset-4 hover:decoration-red"
         >
-          Read the Flow build log
+          Read the Wispr Flow build log
           <ArrowRight size={11} />
         </Link>
       </section>
@@ -219,7 +219,7 @@ export default function AboutPage() {
             ],
             [
               "It does not record audio.",
-              "Flow handles dictation at the OS level; Viva only sees the text.",
+              "Wispr Flow handles dictation at the OS level; Viva only sees the text.",
             ],
           ].map(([title, body]) => (
             <div key={title} className="border border-rule bg-cream p-4">

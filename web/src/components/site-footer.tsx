@@ -21,6 +21,11 @@ export function SiteFooter() {
           <p className="mono-label text-ink-soft">Take a look</p>
           <ul className="mt-3 space-y-2 text-sm">
             <li>
+              <Link href="/pitch" className="hover:text-red">
+                Judge brief
+              </Link>
+            </li>
+            <li>
               <Link href="/demo" className="hover:text-red">
                 Scripted replays
               </Link>
@@ -37,7 +42,7 @@ export function SiteFooter() {
             </li>
             <li>
               <Link href="/build" className="hover:text-red">
-                Flow build log
+                Wispr Flow build log
               </Link>
             </li>
           </ul>
