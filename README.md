@@ -33,60 +33,76 @@ Today the only answer is a 30-minute verbal interview, squeezed into a calendar 
 
 ## What Viva Does
 
-<table>
-<tr>
-<td width="50%">
+### Step 1 — Ingest a file
 
-**1. Ingest a file**
 Paste code directly, or browse any public GitHub repository and pick a file. The code stays visible throughout the entire exam.
 
-**2. Five deliberate questions**
-Viva builds a *question ladder* — five rungs, one concept each:
+### Step 2 — The Question Ladder
 
-| # | Rung | What it tests |
-|---|---|---|
-| 1 | **Comprehension** | What does this file do? Where does its responsibility stop? |
-| 2 | **Decision** | What structural choice shaped it, and what did it beat? |
-| 3 | **Failure** | What fails first, and on which line does it begin? |
-| 4 | **Change** | How would a concrete new requirement change it? |
-| 5 | **Ownership** | Pick one non-trivial line: why does it exist? What breaks without it? |
+Viva builds five deliberate questions — one concept per rung, each harder to fake than the last.
 
-</td>
-<td width="50%">
+```mermaid
+flowchart TD
+    A["🧩 1 · Comprehension\nWhat does this file do?\nWhere does its responsibility stop?"]
+    B["🏗️ 2 · Decision\nWhat structural choice shaped it?\nWhat did it beat?"]
+    C["💥 3 · Failure\nWhat fails first?\nWhich line does it begin on?"]
+    D["🔄 4 · Change\nHow would a concrete new\nrequirement change it?"]
+    E["🫱 5 · Ownership\nPick one non-trivial line:\nwhy does it exist, what breaks without it?"]
 
-**3. Answer out loud with Wispr Flow**
-No microphone permission. No audio recording. No transcription pipeline. Wispr Flow types into the answer box exactly as it would into any other field.
+    A --> B --> C --> D --> E
+```
 
-**4. Adaptive probes**
-When an answer is vague, Viva quotes your own words back and asks the follow-up a great interviewer would ask. Up to 2 probes per question, 8 total turns — pressure without interrogation.
+### Step 3 — Answer out loud with Wispr Flow
 
-**5. A scorecard with receipts**
-Every score points to a line of code and a sentence you actually said. Including the killer signal: **confident but wrong**.
+Wispr Flow types into the answer box exactly as it would into any other field.
 
-</td>
-</tr>
-</table>
+- **No microphone permission** requested
+- **No audio** recorded or retained
+- **No transcription pipeline** — plain text in, plain text stored
+
+### Step 4 — Adaptive probes
+
+When an answer is vague, Viva quotes your own words back and asks the follow-up a great interviewer would ask.
+
+```
+Answer → Vague? ──Yes──▶ Quote your words back → Probe question
+                 │
+                No
+                 │
+                 ▼
+          Next rung of the ladder
+```
+
+Bounded at **2 probes per question** and **8 total turns** — enough pressure to reveal reasoning, not enough to feel like an interrogation.
+
+### Step 5 — A scorecard with receipts
+
+Every score points to a line of code and a sentence you actually said — including the killer signal: **confident but wrong**.
 
 ---
 
 ## The Report
 
-Four axes. Every one backed by evidence.
+```mermaid
+flowchart LR
+    T["📝 Your Answer\n(via Wispr Flow)"]
 
-| Axis | What it measures |
-|---|---|
-| 🧠 **Correctness** | Was the technical claim accurate against the code? |
-| 🔬 **Depth** | Did the answer reach below the surface? |
-| 🫱 **Ownership** | Did the candidate reason about choices, not just features? |
-| 💬 **Clarity** | Was the explanation coherent and precise? |
+    T --> C["🧠 Correctness\nWas the claim accurate\nagainst the code?"]
+    T --> D["🔬 Depth\nDid the answer reach\nbelow the surface?"]
+    T --> O["🫱 Ownership\nDid you reason about\nchoices, not just features?"]
+    T --> CL["💬 Clarity\nWas the explanation\ncoherent and precise?"]
 
-Each axis shows:
-- An **exact quote** from your answer
-- The **code line range** used as evidence
-- A **confident but wrong** flag when a confident claim contradicts the code
-- **Key improvement areas** written as coaching, not generic feedback
+    C & D & O & CL --> R["📊 Final Scorecard"]
+```
 
-The full session transcript is saved. The report is shareable with a public link (redacted — no private scores or expected answers exposed).
+Every axis in the scorecard includes:
+
+> **Quote** — an exact sentence from your answer
+> **Evidence** — the code line range it was measured against
+> **⚠️ Confident but wrong** — flagged when a confident claim contradicts the code
+> **Coaching** — improvement areas written as practical guidance, not generic advice
+
+The full session transcript is saved. A public, redacted report link can be shared — private scores, expected answers, and evaluations are never exposed.
 
 ---
 
