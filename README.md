@@ -8,6 +8,7 @@
 
 [![Live App](https://img.shields.io/badge/🚀_Live_App-viva--oral--exam.vercel.app-black?style=for-the-badge)](https://viva-oral-exam.vercel.app)
 [![Demo Gallery](https://img.shields.io/badge/🎬_Watch_Demo-No_setup_needed-6366f1?style=for-the-badge)](https://viva-oral-exam.vercel.app/demo)
+[![YouTube Demo](https://img.shields.io/badge/▶_YouTube-Watch_the_demo-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://www.youtube.com/watch?v=jk2OX-Oi118)
 [![Hackathon](https://img.shields.io/badge/WeMakeDevs_×_Wispr_Flow-No_Hands_Challenge-orange?style=for-the-badge)](https://viva-oral-exam.vercel.app)
 
 > **"In 2026, anyone can ship code with AI. Almost nobody can defend a line of it.**
@@ -122,6 +123,10 @@ Voice changes the signal. Typing lets you edit and polish. Speaking reveals whet
 ---
 
 ## Try It — Right Now
+
+### 📺 Watch the demo video
+
+[![Watch the Viva demo on YouTube](https://img.youtube.com/vi/jk2OX-Oi118/maxresdefault.jpg)](https://www.youtube.com/watch?v=jk2OX-Oi118)
 
 ### 🎬 Watch three scripted demos (no setup, no quota, always available)
 
