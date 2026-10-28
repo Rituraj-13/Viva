@@ -2,7 +2,7 @@
 
 # 🎓 Viva
 
-### *The oral exam for code.*
+### _The oral exam for code._
 
 **Paste a file. Answer five questions out loud. Get a scorecard that quotes your words back — with exact line numbers.**
 
@@ -24,7 +24,7 @@ Code reviews test style. CI tests correctness. Linters test syntax.
 
 **Nothing tests understanding.**
 
-An engineering manager needs to know: does this person *own* their code, or did they just ship it? A developer preparing for interviews needs to know: can they defend what they built, or only describe it?
+An engineering manager needs to know: does this person _own_ their code, or did they just ship it? A developer preparing for interviews needs to know: can they defend what they built, or only describe it?
 
 Today the only answer is a 30-minute verbal interview, squeezed into a calendar slot, with no transcript, no evidence, and no consistency.
 
@@ -132,11 +132,11 @@ Voice changes the signal. Typing lets you edit and polish. Speaking reveals whet
 
 Open [`/demo`](https://viva-oral-exam.vercel.app/demo) to watch three authored sessions:
 
-| Demo | What it shows |
-|---|---|
-| **Strong explanation** | A candidate who owns the code deeply |
-| **Partial explanation + probe** | Viva pushing for depth when an answer is surface-level |
-| **Confident but wrong** | The killer signal — confident, fluent, and factually incorrect |
+| Demo                            | What it shows                                                  |
+| ------------------------------- | -------------------------------------------------------------- |
+| **Strong explanation**          | A candidate who owns the code deeply                           |
+| **Partial explanation + probe** | Viva pushing for depth when an answer is surface-level         |
+| **Confident but wrong**         | The killer signal — confident, fluent, and factually incorrect |
 
 No microphone. No API key. No model calls. Deterministic and always available — even when a provider is rate-limited.
 
@@ -180,28 +180,30 @@ No microphone. No API key. No model calls. Deterministic and always available �
 
 Groq won the latency bake-off. Google Gemini is the automatic fallback. Anthropic is an optional reserve.
 
-| Provider | Role | Why |
-|---|---|---|
-| **Groq** (`gpt-oss-120b`) | Primary | Lowest latency; native Structured Outputs |
-| **Google** (`gemini-3.8-flash`) | Fallback | High quality; AI SDK adapter |
-| **Anthropic** | Reserve | Optional; enabled via config |
+| Provider                        | Role     | Why                                       |
+| ------------------------------- | -------- | ----------------------------------------- |
+| **Groq** (`gpt-oss-120b`)       | Primary  | Lowest latency; native Structured Outputs |
+| **Google** (`gemini-3.8-flash`) | Fallback | High quality; AI SDK adapter              |
+| **Anthropic**                   | Reserve  | Optional; enabled via config              |
 
 Strict structured output schema on every provider:
+
 ```ts
 response_format: {
   type: "json_schema",
   json_schema: { name: "evaluation", strict: true, schema: ... }
 }
 ```
+
 Zod schemas are converted to JSON Schema and validated again after the response. If every configured provider fails, deterministic heuristics still produce a usable session — no broken states.
 
 ### What is model-generated vs. deterministic?
 
-| Component | Owner |
-|---|---|
-| Question ladder | **Model** (line-anchored to your code) |
-| Per-answer evaluation (axes, quote, probe) | **Model** |
-| Final scores, evidence, band, improvement areas | **Application code** |
+| Component                                       | Owner                                  |
+| ----------------------------------------------- | -------------------------------------- |
+| Question ladder                                 | **Model** (line-anchored to your code) |
+| Per-answer evaluation (axes, quote, probe)      | **Model**                              |
+| Final scores, evidence, band, improvement areas | **Application code**                   |
 
 The report's scores do not change because a second model rephrased them differently. Evidence is computed first, then rendered.
 
@@ -256,22 +258,22 @@ pnpm build && pnpm start  # Production build
 
 ## Configuration Reference
 
-| Variable | Default | Purpose |
-|---|---|---|
-| `DATABASE_URL` | — | Neon/Postgres connection string. Empty = local JSON store. |
-| `AI_PROVIDER` | `groq` | Primary provider: `groq`, `google`, or `anthropic` |
-| `GROQ_API_KEY` | — | Primary Groq credential |
-| `GOOGLE_GENERATIVE_AI_API_KEY` | — | Google Gemini fallback credential |
-| `MODEL_FALLBACK` | `openai/gpt-oss-120b` | Groq model |
-| `MODEL_SMART` | `gemini-3.8-flash` | Google model |
-| `ANTHROPIC_API_KEY` / `ANTHROPIC_MODEL` | — | Optional reserve provider |
-| `ALLOW_CLAUDE_FALLBACK` | `false` | Enable Anthropic reserve |
-| `GITHUB_TOKEN` | — | Raises GitHub API limit from 60 → 5,000 req/hr |
-| `NEXT_PUBLIC_APP_URL` | — | Canonical app origin |
-| `VIVA_DATA_DIR` | — | Custom directory for local JSON store |
-| `MAX_SESSIONS_PER_DAY` | `20` | Per-browser live session limit (rolling window) |
-| `MAX_LIVE_SESSIONS_PER_DAY` | `20` | Global live session limit |
-| `MAX_TURNS_PER_HOUR` | `60` | Per-browser turn limit |
+| Variable                                | Default               | Purpose                                                    |
+| --------------------------------------- | --------------------- | ---------------------------------------------------------- |
+| `DATABASE_URL`                          | —                     | Neon/Postgres connection string. Empty = local JSON store. |
+| `AI_PROVIDER`                           | `groq`                | Primary provider: `groq`, `google`, or `anthropic`         |
+| `GROQ_API_KEY`                          | —                     | Primary Groq credential                                    |
+| `GOOGLE_GENERATIVE_AI_API_KEY`          | —                     | Google Gemini fallback credential                          |
+| `MODEL_FALLBACK`                        | `openai/gpt-oss-120b` | Groq model                                                 |
+| `MODEL_SMART`                           | `gemini-3.8-flash`    | Google model                                               |
+| `ANTHROPIC_API_KEY` / `ANTHROPIC_MODEL` | —                     | Optional reserve provider                                  |
+| `ALLOW_CLAUDE_FALLBACK`                 | `false`               | Enable Anthropic reserve                                   |
+| `GITHUB_TOKEN`                          | —                     | Raises GitHub API limit from 60 → 5,000 req/hr             |
+| `NEXT_PUBLIC_APP_URL`                   | —                     | Canonical app origin                                       |
+| `VIVA_DATA_DIR`                         | —                     | Custom directory for local JSON store                      |
+| `MAX_SESSIONS_PER_DAY`                  | `20`                  | Per-browser live session limit (rolling window)            |
+| `MAX_LIVE_SESSIONS_PER_DAY`             | `20`                  | Global live session limit                                  |
+| `MAX_TURNS_PER_HOUR`                    | `60`                  | Per-browser turn limit                                     |
 
 Limits are **rolling windows**, not midnight-reset counters. No login system; anonymous cookie handles ownership and quota.
 
@@ -314,14 +316,14 @@ The health endpoint confirms configuration. For provider failures, inspect Verce
 
 ## API Reference
 
-| Method | Route | Purpose |
-|---|---|---|
-| `POST` | `/api/sessions` | Create a session and generate the question ladder |
-| `POST` | `/api/sessions/:id/turns` | Grade an answer; optionally create a probe |
-| `POST` | `/api/sessions/:id/finish` | Persist the deterministic final report |
-| `GET` | `/api/reports/:slug` | Return a redacted public report |
-| `DELETE` | `/api/sessions/:id` | Delete an owned session |
-| `GET` | `/api/health` | Show store type and configured providers |
+| Method   | Route                      | Purpose                                           |
+| -------- | -------------------------- | ------------------------------------------------- |
+| `POST`   | `/api/sessions`            | Create a session and generate the question ladder |
+| `POST`   | `/api/sessions/:id/turns`  | Grade an answer; optionally create a probe        |
+| `POST`   | `/api/sessions/:id/finish` | Persist the deterministic final report            |
+| `GET`    | `/api/reports/:slug`       | Return a redacted public report                   |
+| `DELETE` | `/api/sessions/:id`        | Delete an owned session                           |
+| `GET`    | `/api/health`              | Show store type and configured providers          |
 
 ---
 
@@ -349,27 +351,27 @@ For local development, the same shape is written to `web/.data/sessions.json`.
 
 ## Security & Privacy
 
-| Boundary | How |
-|---|---|
-| Private session access | Requires anonymous owner cookie |
-| Public report | Exposes scorecard only — no expected answers, red flags, or private evaluations |
-| Source code | Treated as untrusted prompt data; instructions inside a file are not followed |
-| API keys | Server-side only; never exposed to the browser |
-| Data deletion | `DELETE /api/sessions/:id` removes session and public report completely |
+| Boundary               | How                                                                             |
+| ---------------------- | ------------------------------------------------------------------------------- |
+| Private session access | Requires anonymous owner cookie                                                 |
+| Public report          | Exposes scorecard only — no expected answers, red flags, or private evaluations |
+| Source code            | Treated as untrusted prompt data; instructions inside a file are not followed   |
+| API keys               | Server-side only; never exposed to the browser                                  |
+| Data deletion          | `DELETE /api/sessions/:id` removes session and public report completely         |
 
 ---
 
 ## Engineering Trade-offs
 
-| Decision | Rationale |
-|---|---|
-| One focused file per viva | Keeps the interview concrete and the evidence auditable |
-| Text input via Wispr Flow | No audio pipeline, no retention, no transcription cost |
-| Strict structured output | Prevents malformed provider responses from reaching scoring logic |
-| Deterministic report scoring | Scores are owned by application code, not a second LLM pass |
-| JSONB session document | Full transcript and report evolve together; indexes cover all lookup paths |
-| Scripted replay demos | Judges can experience the product without credentials, microphone, or model quota |
-| Anonymous cookie ownership | Frictionless UX; no false promise of account security |
+| Decision                     | Rationale                                                                         |
+| ---------------------------- | --------------------------------------------------------------------------------- |
+| One focused file per viva    | Keeps the interview concrete and the evidence auditable                           |
+| Text input via Wispr Flow    | No audio pipeline, no retention, no transcription cost                            |
+| Strict structured output     | Prevents malformed provider responses from reaching scoring logic                 |
+| Deterministic report scoring | Scores are owned by application code, not a second LLM pass                       |
+| JSONB session document       | Full transcript and report evolve together; indexes cover all lookup paths        |
+| Scripted replay demos        | Judges can experience the product without credentials, microphone, or model quota |
+| Anonymous cookie ownership   | Frictionless UX; no false promise of account security                             |
 
 ---
 
@@ -426,6 +428,6 @@ viva/
 
 **Built for [WeMakeDevs × Wispr Flow — No Hands: The Wispr Challenge](https://viva-oral-exam.vercel.app) · Builders track**
 
-*If you can build it, can you speak it?*
+_If you can build it, can you speak it?_
 
 </div>
